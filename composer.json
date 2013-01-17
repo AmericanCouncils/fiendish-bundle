@@ -1,7 +1,7 @@
 {
     "name": "davidmikesimon/fiendish-bundle",
     "version": "0.1.0",
-    "description": "Control independently running daemons from Symfony2",
+    "description": "Background daemons for your Symfony2 app",
     "keywords": ["daemon", "supervisor"],
     "type": "symfony-bundle",
     "license": "MIT",
