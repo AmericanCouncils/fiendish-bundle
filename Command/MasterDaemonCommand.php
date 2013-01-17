@@ -14,6 +14,10 @@ class MasterDaemonCommand extends Command
         $this
             ->setName('fiendish:master-daemon')
             ->setDescription('Starts the master process management daemon')
+            ->addArgument(
+                'group',
+                InputArgument::REQUIRED
+            )
             ;
     }
 
@@ -21,6 +25,6 @@ class MasterDaemonCommand extends Command
     {
         print("Starting master daemon.\n");
         $d = new MasterDaemon("master", $this->getApplication()->getKernel()->getContainer());
-        $d->run();
+        $d->run(["group" => $input->getArgument('group')]);
     }
 }

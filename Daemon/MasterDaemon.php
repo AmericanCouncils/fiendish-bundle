@@ -14,8 +14,7 @@ class MasterDaemon extends BaseDaemon
 
     public function run($initialState = null)
     {
-        // TODO Get group name from cmd line arguments here
-        $groupName = 'beatbox';
+        $groupName = $initialState->{"group"};
 
         $this->manager = new Manager($groupName, $this->getContainer());
 
