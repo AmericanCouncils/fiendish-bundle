@@ -1,6 +1,6 @@
 <?php
 
-namespace Beatbox\DaemonBundle\DependencyInjection;
+namespace DavidMikeSimon\FiendishBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('beatbox_daemon');
+        $rootNode = $treeBuilder->root('fiendish');
 
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for

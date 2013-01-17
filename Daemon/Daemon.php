@@ -1,6 +1,6 @@
 <?php
 
-namespace Beatbox\DaemonBundle\Daemon;
+namespace DavidMikeSimon\FiendishBundle\Daemon;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -8,8 +8,6 @@ use PhpAmqpLib\Connection\AMQPConnection;
 
 abstract class Daemon implements ContainerAwareInterface
 {
-    const HEARTBEAT_REDIS_PREFIX = "daemons:heartbeat:";
-
     private $container;
     protected function getContainer()
     {

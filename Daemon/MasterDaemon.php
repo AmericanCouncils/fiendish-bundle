@@ -1,8 +1,8 @@
 <?php
 
-namespace Beatbox\DaemonBundle\Daemon;
+namespace DavidMikeSimon\FiendishBundle\Daemon;
 
-use Beatbox\DaemonBundle\Supervisor\Manager;
+use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class MasterDaemon extends Daemon
@@ -52,7 +52,7 @@ class MasterDaemon extends Daemon
                 $rabbit["ch"]->wait();
             }
 
-            print("Lub-dub\n");
+            print(".");
 
             // TODO If we've been up a while, restart ourselves to avoid
             // any possible PHP weirdness/leaks.

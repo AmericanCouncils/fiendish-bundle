@@ -1,8 +1,8 @@
 <?php
 
-namespace Beatbox\DaemonBundle\Supervisor;
+namespace DavidMikeSimon\FiendishBundle\Supervisor;
 
-use Beatbox\DaemonBundle\Entity\Process;
+use DavidMikeSimon\FiendishBundle\Entity\Process;
 use SupervisorClient\SupervisorClient;
 
 class Manager
@@ -39,7 +39,7 @@ class Manager
         }
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('BeatboxDaemonBundle:Process');
+        $repo = $em->getRepository('DavidMikeSimonFiendishBundle:Process');
         $tgt_procs = [];
         foreach ($repo->findByGroupName($this->groupName) as $tp) {
             if (!$tp->isSetup()) {
@@ -48,6 +48,7 @@ class Manager
             // Master is not really in the same Supervisor group as subdaemons.
             // If it were, it would be possible for us to stop ourself! And
             // then nobody would be around to bring us back online.
+            // TODO Master proc name should include the group name, e.g. foo_master
             if ($tp->getProcName() != "master") {
                 $tgt_procs[$tp->getProcName()] = $tp;
             }

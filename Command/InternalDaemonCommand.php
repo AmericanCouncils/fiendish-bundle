@@ -1,5 +1,6 @@
 <?php
-namespace Beatbox\DaemonBundle\Command;
+
+namespace DavidMikeSimon\FiendishBundle\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,8 +12,8 @@ class InternalDaemonCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('beatbox:internal-daemon')
-            ->setDescription('Used by Beatbox internally to start sub-daemons')
+            ->setName('fiendish:internal-daemon')
+            ->setDescription('Used internally to start sub-daemons')
             ->addArgument(
                 'daemonSpec',
                 InputArgument::REQUIRED

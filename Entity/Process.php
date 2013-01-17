@@ -1,6 +1,6 @@
 <?php
 
-namespace Beatbox\DaemonBundle\Entity;
+namespace DavidMikeSimon\FiendishBundle\Entity;
 
 use Symfony\Component\Process\PhpExecutableFinder;
 use Doctrine\ORM\Mapping as ORM;
@@ -127,7 +127,7 @@ class Process
             $phpExec,
             $consolePath,
             "-v",
-            "beatbox:internal-daemon",
+            "fiendish:internal-daemon",
             "\"" . addslashes($daemonSpec) . "\""
             ]);
     }
