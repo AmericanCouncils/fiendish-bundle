@@ -12,7 +12,9 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "2.*"
+        "symfony/framework-bundle": "2.*",
+        "mondalaci/supervisor-client": "dev-master",
+        "videlalvaro/php-amqplib": "dev-master"
     },
     "autoload": {
         "psr-0": { "DavidMikeSimon\\FiendishBundle": "" }
