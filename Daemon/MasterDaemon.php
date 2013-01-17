@@ -5,9 +5,9 @@ namespace DavidMikeSimon\FiendishBundle\Daemon;
 use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class MasterDaemon extends Daemon
+class MasterDaemon extends BaseDaemon
 {
-    const CYCLE_DELAY = 3;
+    const HEARTBEAT_DELAY = 3;
 
     private $manager;
     private $groupName;
@@ -45,7 +45,7 @@ class MasterDaemon extends Daemon
             $read = array($rabbit['conn']->getSocket());
             $write = null;
             $except = null;
-            $changes = stream_select($read, $write, $except, self::CYCLE_DELAY);
+            $changes = stream_select($read, $write, $except, self::HEARTBEAT_DELAY);
             if ($changes === false) {
                 throw new \Exception("Stream_select failed");
             } elseif ($changes > 0) {

@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use PhpAmqpLib\Connection\AMQPConnection;
 
-abstract class Daemon implements ContainerAwareInterface
+abstract class BaseDaemon implements ContainerAwareInterface
 {
     private $container;
     protected function getContainer()
