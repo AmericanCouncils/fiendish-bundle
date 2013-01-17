@@ -1,3 +1,4 @@
 # Fiendish
 
-Fiendish allows you to manipulate your own daemon processes from within Symfony2.
+Fiendish allows you to write daemons within Symfony2, and control their
+execution.
