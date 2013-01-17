@@ -26,6 +26,7 @@ class MasterDaemonCommand extends Command
     {
         print("Starting master daemon.\n");
         $d = new MasterDaemon("master", $this->getApplication()->getKernel()->getContainer());
-        $d->run(["group" => $input->getArgument('group')]);
+        $internalState = (object)["group" => $input->getArgument('group')];
+        $d->run($internalState);
     }
 }

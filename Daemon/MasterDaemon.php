@@ -14,7 +14,7 @@ class MasterDaemon extends BaseDaemon
 
     public function run($initialState = null)
     {
-        $groupName = $initialState->{"group"};
+        $groupName = $initialState->group;
 
         $this->manager = new Manager($groupName, $this->getContainer());
 
