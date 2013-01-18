@@ -12,6 +12,7 @@
         }
     ],
     "require": {
+        "symfony/symfony": "2.*",
         "symfony/framework-bundle": "2.*",
         "mondalaci/supervisor-client": "dev-master",
         "doctrine/orm": ">=2.2.3,<2.4-dev",
