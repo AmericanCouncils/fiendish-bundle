@@ -1,5 +1,0 @@
-test_route_1:
-    pattern:  /tests.{_format}
-r   defaults: { _controller: DavidMikeSimonFiendishTestBundle:Test:index, _format: json }
-    requirements:
-        _method: GET

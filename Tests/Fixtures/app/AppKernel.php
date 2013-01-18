@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests\Functional;
+namespace DavidMikeSimon\FiendishBundle\Tests\Fixtures;
 
 // get the autoload file
 $dir = __DIR__;
@@ -10,6 +10,11 @@ while ($dir !== $lastDir) {
 
     if (is_file($dir.'/autoload.php')) {
         require_once $dir.'/autoload.php';
+        break;
+    }
+
+    if (is_file($dir.'/vendor/autoload.php')) {
+        require_once $dir.'/vendor/autoload.php';
         break;
     }
 
