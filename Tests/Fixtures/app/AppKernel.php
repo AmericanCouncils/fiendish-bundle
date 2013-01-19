@@ -1,30 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests\Fixtures;
-
-// get the autoload file
-$dir = __DIR__;
-$lastDir = null;
-while ($dir !== $lastDir) {
-    $lastDir = $dir;
-
-    if (is_file($dir.'/autoload.php')) {
-        require_once $dir.'/autoload.php';
-        break;
-    }
-
-    if (is_file($dir.'/vendor/autoload.php')) {
-        require_once $dir.'/vendor/autoload.php';
-        break;
-    }
-
-    if (is_file($dir.'/autoload.php.dist')) {
-        require_once $dir.'/autoload.php.dist';
-        break;
-    }
-
-    $dir = dirname($dir);
-}
+namespace DavidMikeSimon\FiendishBundle\Tests\Functional;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -34,11 +10,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class AppKernel extends Kernel
 {
-    public function __construct($environment, $debug)
-    {
-        parent::__construct($environment, $debug);
-    }
-
     public function registerBundles()
     {
         return array(
@@ -47,10 +18,6 @@ class AppKernel extends Kernel
             new \DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle(),
             new \DavidMikeSimon\FiendishBundle\Tests\Fixtures\DavidMikeSimonFiendishTestBundle(),
         );
-    }
-
-    public function init()
-    {
     }
 
     public function getRootDir()

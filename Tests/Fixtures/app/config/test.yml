@@ -10,3 +10,17 @@ framework:
     session:
         storage_id:     session.storage.mock_file
     profiler:      { only_exceptions: false }
+
+doctrine:
+    dbal:
+        driver: pdo_mysql
+        host: 127.0.0.1
+        port: null
+        name: beatbox
+        user: root
+        password: null
+        charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        auto_mapping: true

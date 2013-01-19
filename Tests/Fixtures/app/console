@@ -7,14 +7,14 @@ umask(0000);
 
 set_time_limit(0);
 
-//require_once __DIR__.'/bootstrap.php.cache';
+require_once __DIR__.'/../../bootstrap.php';
 require_once __DIR__.'/AppKernel.php';
 
-use DavidMikeSimon\FiendishBundle\Tests\Fixtures\AppKernel;
+use DavidMikeSimon\FiendishBundle\Tests\Functional\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 
 $input = new ArgvInput();
-$kernel = new AppKernel('test', false);
+$kernel = new AppKernel('test', true);
 $application = new Application($kernel);
 $application->run($input);
