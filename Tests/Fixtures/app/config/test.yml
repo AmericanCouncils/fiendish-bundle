@@ -13,10 +13,10 @@ framework:
 
 doctrine:
     dbal:
+        dbname: beatbox
         driver: pdo_mysql
         host: 127.0.0.1
         port: null
-        name: beatbox
         user: root
         password: null
         charset:  UTF8
