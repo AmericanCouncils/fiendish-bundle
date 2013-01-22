@@ -1,21 +1,12 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace DavidMikeSimon\FiendishBundle\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
 
-abstract class WebTestCase extends BaseWebTestCase
+abstract class FiendishTestCase extends WebTestCase
 {
     protected function deleteTmpDir()
     {
@@ -49,7 +40,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $class = self::getKernelClass();
 
         return new $class(
-            'default',
+            'test',
             isset($options['debug']) ? $options['debug'] : true
         );
     }

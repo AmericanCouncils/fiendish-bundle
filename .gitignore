@@ -1,2 +1,5 @@
 composer.lock
 vendor
+*.swp
+Tests/Fixtures/app/cache/
+Tests/Fixtures/app/logs/

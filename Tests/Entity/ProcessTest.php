@@ -2,9 +2,9 @@
 
 namespace DavidMikeSimon\FiendishBundle\Tests\Entity;
 
-use DavidMikeSimon\FiendishBundle\Tests\WebTestCase;
+use DavidMikeSimon\FiendishBundle\Tests\FiendishTestCase;
 
-class ProcessTest extends WebTestCase
+class ProcessTest extends FiendishTestCase
 {
     public function testSimple()
     {
