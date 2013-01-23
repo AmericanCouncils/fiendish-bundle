@@ -12,3 +12,6 @@ if ((!$loader = includeIfExists(__DIR__.'/../vendor/autoload.php')) && (!$loader
         'curl -s http://getcomposer.org/installer | php'.PHP_EOL.
         'php composer.phar install'.PHP_EOL);
 }
+
+use Doctrine\Common\Annotations\AnnotationRegistry;
+AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
