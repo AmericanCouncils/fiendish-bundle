@@ -9,12 +9,18 @@ class Version20130115161320 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        $auto_inc_keyword = "";
-        if ($this->connection->getDatabasePlatform()->getName() == "mysql") {
-            $auto_inc_keyword = "AUTO_INCREMENT ";
-        }
-        print("AIK >" . $auto_inc_keyword . "<\n");
-        $this->addSql("CREATE TABLE Process (id INT $auto_inc_keyword, initialState LONGTEXT NOT NULL, daemonName VARCHAR(255) NOT NULL, daemonClass VARCHAR(255) NOT NULL, groupName VARCHAR(255) NOT NULL, procName VARCHAR(255) NULL, command LONGTEXT NULL, PRIMARY KEY(id ASC))");
+        $schema = new Schema;
+        $tbl = $schema->createTable("Process");
+        $tbl->addColumn("id", "integer", ["unsigned" => true, "autoincrement" => true]);
+        $tbl->addColumn("initialState", "text");
+        $tbl->addColumn("daemonName", "string");
+        $tbl->addColumn("daemonClass", "string");
+        $tbl->addColumn("groupName", "string");
+        $tbl->addColumn("procName", "string", ["notnull" => false]);
+        $tbl->addColumn("command", "text", ["notnull" => false]);
+        $tbl->setPrimaryKey(["id"]);
+
+        $this->addSql($schema->toSql(($this->connection->getDatabasePlatform())));
     }
 
     public function down(Schema $schema)
