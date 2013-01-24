@@ -13,13 +13,9 @@ framework:
 
 doctrine:
     dbal:
-        dbname: beatbox
-        driver: pdo_mysql
-        host: 127.0.0.1
-        port: null
-        user: root
-        password: null
-        charset:  UTF8
+        driver: pdo_sqlite
+        dbname: "testdb.sqlite3"
+        path: "%kernel.root_dir%/testdb.sqlite3"
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"

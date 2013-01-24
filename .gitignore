@@ -3,3 +3,4 @@ vendor
 *.swp
 Tests/Fixtures/app/cache/
 Tests/Fixtures/app/logs/
+Tests/Fixtures/app/testdb.sqlite3
