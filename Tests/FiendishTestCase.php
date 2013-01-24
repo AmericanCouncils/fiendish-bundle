@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Doctrine\Bundle\MigrationsBundle\Command\MigrationsMigrateDoctrineCommand;
+use Doctrine\DBAL\DBALException;
 
 abstract class FiendishTestCase extends WebTestCase
 {
@@ -43,6 +44,20 @@ abstract class FiendishTestCase extends WebTestCase
     {
         $this->runSymfonyCommand("doctrine:migrations:migrate 0");
         $this->runSymfonyCommand("doctrine:migrations:migrate");
+
+        // Doctrine freaks out first time we run a query after schema changes
+        $db_conn = $this->getContainer()->get("doctrine")->getConnection();
+        $em = $this->getContainer()->get('doctrine')->getEntityManager();
+        $qb = $em
+            ->getRepository('DavidMikeSimonFiendishBundle:Process')
+            ->createQueryBuilder('process');
+        $qb->select('count(process.id)');
+
+        try {
+            $qb->getQuery()->getSingleScalarResult();
+        } catch (DBALException $e) {
+            // Do nothing, next query will work
+        }
 
         parent::setUp();
     }
