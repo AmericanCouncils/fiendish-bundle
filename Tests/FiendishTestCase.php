@@ -13,6 +13,8 @@ use Doctrine\DBAL\DBALException;
 
 abstract class FiendishTestCase extends WebTestCase
 {
+    private static $migrated = false;
+
     protected function getContainer(array $options = array())
     {
         if (!static::$kernel) {
@@ -42,28 +44,22 @@ abstract class FiendishTestCase extends WebTestCase
 
     public function setUp()
     {
-        $this->runSymfonyCommand("doctrine:migrations:migrate 0");
-        $this->runSymfonyCommand("doctrine:migrations:migrate");
-
-        // Doctrine freaks out first time we run a query after schema changes
-        $db_conn = $this->getContainer()->get("doctrine")->getConnection();
-        $em = $this->getContainer()->get('doctrine')->getEntityManager();
-        $qb = $em
-            ->getRepository('DavidMikeSimonFiendishBundle:Process')
-            ->createQueryBuilder('process');
-        $qb->select('count(process.id)');
-
-        try {
-            $qb->getQuery()->getSingleScalarResult();
-        } catch (DBALException $e) {
-            // Do nothing, next query will work
+        if (!self::$migrated) {
+            // FIXME: Ugly, we should avoid using a static variable to do this
+            $this->runSymfonyCommand("doctrine:migrations:migrate 0");
+            $this->runSymfonyCommand("doctrine:migrations:migrate");
+            self::$migrated = true;
+        } else {
+            $conn = $this->getContainer()->get("doctrine")->getConnection() ;
+            $sm = $conn->getSchemaManager();
+            foreach ($sm->listTables() as $table) {
+                if ($table->getName() != "migration_versions") {
+                    $conn->exec("DELETE FROM " . $table->getName());
+                }
+            }
         }
 
         parent::setUp();
-    }
-
-    public function tearDown()
-    {
     }
 
     protected function runSymfonyCommand($cmd)
