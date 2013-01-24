@@ -9,7 +9,6 @@ class Version20130115161320 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        $schema = new Schema;
         $tbl = $schema->createTable("Process");
         $tbl->addColumn("id", "integer", ["unsigned" => true, "autoincrement" => true]);
         $tbl->addColumn("initialState", "text");
@@ -19,8 +18,6 @@ class Version20130115161320 extends AbstractMigration
         $tbl->addColumn("procName", "string", ["notnull" => false]);
         $tbl->addColumn("command", "text", ["notnull" => false]);
         $tbl->setPrimaryKey(["id"]);
-
-        $this->addSql($schema->toSql(($this->connection->getDatabasePlatform())));
     }
 
     public function down(Schema $schema)
