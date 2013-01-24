@@ -15,6 +15,7 @@ class AppKernel extends Kernel
         return array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new \DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle(),
             new \DavidMikeSimon\FiendishBundle\Tests\Fixtures\DavidMikeSimonFiendishTestBundle(),
         );
