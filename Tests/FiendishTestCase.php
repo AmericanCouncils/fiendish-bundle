@@ -47,6 +47,19 @@ abstract class FiendishTestCase extends WebTestCase
 
     public function setUp()
     {
+        $supervisor = $this->getSupervisorClient();
+        foreach($supervisor->getAllProcessInfo() as $proc) {
+            $is_master = $proc["name"] == self::GROUP_NAME . "_master";
+            $is_grouped = $proc["group"] == self::GROUP_NAME;
+            $is_running = $proc["statename"] == "RUNNING";
+            if ($is_running && ($is_master || $is_grouped)) {
+                $supervisor->stopProcess($proc["name"]);
+            }
+            if ($is_grouped) {
+                $supervisor->removeProcessFromGroup(self::GROUP_NAME, $proc["name"]);
+            }
+        }
+
         if (!self::$migrated) {
             // FIXME: Ugly, we should avoid using a static variable to do this
             $this->runSymfonyCommand("doctrine:migrations:migrate 0");
@@ -61,13 +74,6 @@ abstract class FiendishTestCase extends WebTestCase
                 }
             }
         }
-
-        $supervisor = $this->getSupervisorClient();
-        $proc_info = $supervisor->getProcessInfo(self::GROUP_NAME . "_master");
-        if ($proc_info["statename"] == "RUNNING") {
-            $supervisor->stopProcess(self::GROUP_NAME . "_master");
-        }
-        $supervisor->stopProcessGroup(self::GROUP_NAME);
 
         parent::setUp();
     }
