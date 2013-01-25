@@ -64,4 +64,18 @@ class ProcessTest extends FiendishTestCase
         $jsonifiedIniState = json_decode(json_encode($iniState));
         $this->assertEquals($jsonifiedIniState, $daemonSpec->initialState);
     }
+
+    public function testInvalidSetup() {
+        $em = $this->getContainer()->get('doctrine')->getEntityManager();
+        $proc = new Process(
+            parent::GROUP_NAME,
+            'test_daemon',
+            'Foo/Bar',
+            []
+        );
+
+        $this->setExpectedException('LogicException', 'persist');
+        // ERROR: Have to persist first before calling initialSetup
+        $proc->initialSetup(__DIR__);
+    }
 }

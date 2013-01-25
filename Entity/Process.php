@@ -4,6 +4,7 @@ namespace DavidMikeSimon\FiendishBundle\Entity;
 
 use Symfony\Component\Process\PhpExecutableFinder;
 use Doctrine\ORM\Mapping as ORM;
+use DavidMikeSimon\FiendishBundle\Exception\LogicException;
 
 /**
  * @ORM\Entity
@@ -99,7 +100,7 @@ class Process
     {
         if ($this->isSetup()) { return; }
         if (is_null($this->id)) {
-            throw new \Exception("Called initialSetup on un-persisted object");
+            throw new LogicException("Called initialSetup on un-persisted object");
         }
 
         $this->procName = sprintf("%s.%u", $this->daemonName, $this->id);
