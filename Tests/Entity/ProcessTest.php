@@ -59,6 +59,9 @@ class ProcessTest extends FiendishTestCase
         $this->assertEquals(parent::GROUP_NAME, $daemonSpec->groupName);
         $this->assertEquals("Foo/Bar", $daemonSpec->daemonClass);
         $this->assertEquals("test_daemon", $daemonSpec->daemonName);
-        $this->assertEquals(json_decode(json_encode($iniState)), $daemonSpec->initialState);
+        // PHP JSON conversion turns assoc. arrays into objects, which would break
+        // a straight comparison to $iniState.
+        $jsonifiedIniState = json_decode(json_encode($iniState));
+        $this->assertEquals($jsonifiedIniState, $daemonSpec->initialState);
     }
 }
