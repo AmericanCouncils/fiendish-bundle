@@ -24,10 +24,8 @@ class MasterDaemon extends BaseDaemon
         $rabbit["ch"]->basic_consume($queue, "master",
             false, false, true, false, // 3rd true: Exclusive consumer
             function($msg) {
-                print("GOT MSG " . $msg->body . "\n");
                 // TODO Log both valid and invalid messages
                 if ($msg->body == 'sync') {
-                    print("SYNCING\n");
                     $this->manager->sync();
                 }
                 $msg->delivery_info['channel']->
@@ -51,7 +49,6 @@ class MasterDaemon extends BaseDaemon
                 $rabbit["ch"]->wait();
             }
 
-            print(".");
 
             // TODO If we've been up a while, restart ourselves to avoid
             // any possible PHP weirdness/leaks.
