@@ -6,7 +6,7 @@ use DavidMikeSimon\FiendishBundle\Tests\FiendishTestCase;
 
 class TestHarnessTest extends FiendishTestCase
 {
-    public function testNewMasterDaemonRunning()
+    public function testNewMasterDaemonStartup()
     {
         $this->requiresMaster();
 

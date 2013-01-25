@@ -118,6 +118,7 @@ class Process
 
         $consolePath = realpath($appPath) . DIRECTORY_SEPARATOR . "console";
         $daemonSpec = json_encode([
+            "groupName" => $this->groupName,
             "daemonClass" => $this->daemonClass,
             "daemonName" => $this->daemonName,
             "initialState" => json_decode($this->initialState)

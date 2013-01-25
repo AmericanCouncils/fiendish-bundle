@@ -7,19 +7,58 @@ use DavidMikeSimon\FiendishBundle\Entity\Process;
 
 class ProcessTest extends FiendishTestCase
 {
-    public function testSimple()
+    public function testProcessInitialSetup()
     {
-        $container = $this->getContainer();
-        $em = $container->get('doctrine')->getEntityManager();
-        $qb = $em
-            ->getRepository('DavidMikeSimonFiendishBundle:Process')
-            ->createQueryBuilder('process');
-        $qb->select('count(process.id)');
+        $em = $this->getContainer()->get('doctrine')->getEntityManager();
 
-        $this->assertEquals(0, $qb->getQuery()->getSingleScalarResult());
-        $proc = new Process('fiendish_test', 'test_daemon', 'Test/Foo', []);
+        $iniState = [
+            "some_number" => 42,
+            "another_number" => 18.5,
+            "now_a_string" => "yep i am a string",
+            "nesting_is" => [
+                "fun",
+                "exciting",
+                "profitable",
+                "step 1"
+            ]
+        ];
+        $proc = new Process(
+            parent::GROUP_NAME,
+            'test_daemon',
+            'Foo/Bar',
+            $iniState
+        );
+        $this->assertFalse($proc->isSetup());
         $em->persist($proc);
         $em->flush();
-        $this->assertEquals(1, $qb->getQuery()->getSingleScalarResult());
+
+        $appPath = __DIR__; // Not really a symfony app dir, but ok for test
+        $this->assertFalse($proc->isSetup());
+        $proc->initialSetup($appPath);
+        $this->assertTrue($proc->isSetup());
+
+        $this->assertContains("test_daemon", $proc->getProcName());
+        $this->assertContains((string)($proc->getId()), $proc->getProcName());
+
+        $phpExecPath = explode(" ", $proc->getCommand())[0];
+        $this->assertFileExists($phpExecPath);
+        $this->assertContains("php", $phpExecPath);
+
+        $appConsolePath = explode(" ", $proc->getCommand())[1];
+        $this->assertEquals($appPath . "/console", $appConsolePath);
+
+        $consoleCmd = "fiendish:internal-daemon";
+        $this->assertContains($consoleCmd, $proc->getCommand());
+        $daemonSpecJsonShellEsc = substr(
+            $proc->getCommand(),
+            strpos($proc->getCommand(), $consoleCmd) + strlen($consoleCmd)
+        );
+        $daemonSpecJson = `echo $daemonSpecJsonShellEsc`; // Remove shell escapes
+        $daemonSpec = json_decode($daemonSpecJson);
+
+        $this->assertEquals(parent::GROUP_NAME, $daemonSpec->groupName);
+        $this->assertEquals("Foo/Bar", $daemonSpec->daemonClass);
+        $this->assertEquals("test_daemon", $daemonSpec->daemonName);
+        $this->assertEquals(json_decode(json_encode($iniState)), $daemonSpec->initialState);
     }
 }
