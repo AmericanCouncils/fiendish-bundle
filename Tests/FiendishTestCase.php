@@ -17,6 +17,7 @@ abstract class FiendishTestCase extends WebTestCase
     const GROUP_NAME = "testfiendish";
 
     private static $migrated = false;
+    private static $supervisorClient = null;
 
     protected function getContainer(array $options = array())
     {
@@ -47,7 +48,7 @@ abstract class FiendishTestCase extends WebTestCase
 
     public function setUp()
     {
-        $supervisor = $this->getSupervisorClient();
+        $supervisor = self::getSupervisorClient();
         foreach($supervisor->getAllProcessInfo() as $proc) {
             $is_master = $proc["name"] == self::GROUP_NAME . "_master";
             $is_grouped = $proc["group"] == self::GROUP_NAME;
@@ -80,7 +81,7 @@ abstract class FiendishTestCase extends WebTestCase
 
     protected function requiresMaster()
     {
-        $supervisor = $this->getSupervisorClient();
+        $supervisor = self::getSupervisorClient();
         $proc_info = $supervisor->getProcessInfo(self::GROUP_NAME . "_master");
         if ($proc_info["statename"] == "STOPPED") {
             $supervisor->startProcess(self::GROUP_NAME . "_master");
@@ -110,8 +111,11 @@ abstract class FiendishTestCase extends WebTestCase
         }
     }
 
-    protected function getSupervisorClient()
+    protected static function getSupervisorClient()
     {
-        return new SupervisorClient("unix:///var/run/supervisor.sock", 0, 10);
+        if (is_null(self::$supervisorClient)) {
+            self::$supervisorClient =  new SupervisorClient("unix:///var/run/supervisor.sock", 0, 10);
+        }
+        return self::$supervisorClient;
     }
 }

@@ -10,7 +10,7 @@ class TestHarnessTest extends FiendishTestCase
     {
         $this->requiresMaster();
 
-        $supervisor = $this->getSupervisorClient();
+        $supervisor = parent::getSupervisorClient();
         $proc_info = $supervisor->getProcessInfo(parent::GROUP_NAME . "_master");
         $this->assertEquals(parent::GROUP_NAME . "_master", $proc_info["name"]);
         $this->assertEquals("RUNNING", $proc_info["statename"]);
