@@ -74,7 +74,9 @@ You can also pass arguments to your daemons when you start them. Any
 JSON-serializable object can be used. In the example above a simple
 string is expected, but a realistic app would probably expect an array,
 which can in turn be nested arbitrarily deep with other JSON-serializable
-objects. Be aware that PHP's json deserialization turns associative arrays
+objects.
+
+Be aware that PHP's json deserialization turns associative arrays
 (i.e. arrays with string keys) into objects, so that what was set via `$arg["xyz"]`
 outside the daemon will need to be accessed as `$arg->xyz` within.
 
@@ -98,17 +100,17 @@ MasterDaemon::sendSyncRequest("foobar"); // This call does not block
 ```
 
 The master daemon for the group "foobar" will recieve that request via RabbitMQ.
-During a sync, the master daemon will add and remove processes from the Supervisor
+It will add processes to the Supervisor
 group as necessary to match the processes listed in the table.
 
-To stop a daemon process, delete the Process from the table and send another
+To stop a daemon process, delete the Process and send a
 sync request. Supervisor's state will be updated, and your daemon process
-will recieve a SIGTERM.
+will be killed and removed from the group.
 
 ## Debugging
 
 Supervisor will keep track of everything printed out by your daemons,
-so your best bet for figuring out problems with your daemons crashing
+so your best bet for figuring out problems with your daemons
 is to use the Supervisor console:
 
     $ sudo supervisorctl
