@@ -6,9 +6,9 @@ execution.
 ## Installation
 
 First you need to install and set up these non-PHP dependencies:
-* [RabbitMQ](http://www.rabbitmq.com),
+* [RabbitMQ](http://www.rabbitmq.com)
 * [Supervisor](http://supervisord.org/)
-* [Twiddler](https://github.com/mnaberez/supervisor_twiddler).
+* [Twiddler](https://github.com/mnaberez/supervisor_twiddler)
 
 You will also need to make sure that you have the PHP executable
 available from the command line. On Ubuntu, that means installing
@@ -23,14 +23,13 @@ Next, install fiendish-bundle into your Symfony2 app via composer:
         "davidmikesimon/fiendish-bundle": "dev-master"
     }
 
-Then you'll need to set up the process table in your database. For now,
+Then you'll need to set up the `Process` table in your database. For now,
 that means manually installing and running the migration file
 found in the project's DoctrineMigrations folder.
 
 Finally, you need to add some settings to supervisor to organize
 the daemons for your specific app. Here's an example of a config
-for a project called Foobar, for which the typical location
-would be `/etc/supervisor/conf.d/foobar.conf`:
+`/etc/supervisor/conf.d/foobar.conf` for a project called Foobar:
 
     [program:foobar_master]
     command=/usr/bin/php /var/www/foobar/app/console fiendish:master-daemon foobar
@@ -105,3 +104,20 @@ group as necessary to match the processes listed in the table.
 To stop a daemon process, delete the Process from the table and send another
 sync request. Supervisor's state will be updated, and your daemon process
 will recieve a SIGTERM.
+
+## Debugging
+
+Supervisor will keep track of everything printed out by your daemons,
+so your best bet for figuring out problems with your daemons crashing
+is to use the Supervisor console:
+
+    $ sudo supervisorctl
+    > status
+    foobar_master              RUNNING    pid 8263, uptime 1:35:03
+    foobar:useless_thing.37    FATAL
+    > tail foobar:useless_thing.37
+    FOO fries and a shake!
+    BAR fries and a shake!
+    FOO fries and a shake!
+    BAR fries and a shake!
+    ...  (All print output and PHP error output ends up here) ...
