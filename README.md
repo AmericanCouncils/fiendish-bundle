@@ -82,7 +82,8 @@ outside the daemon will need to be accessed as `$arg->xyz` within.
 
 ## Starting and Stopping Daemon Processes
 
-To start a daemon process, persist a Process object to the database:
+To start a daemon process, persist a Process object to the database and then
+ask the master daemon to sync the change:
 
 ```php
 use DavidMikeSimon\FiendishBundle\Entity\Process;
