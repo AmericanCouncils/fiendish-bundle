@@ -70,11 +70,13 @@ class Process
 
     public function getProcName()
     {
+        $this->requireSetup();
         return $this->procName;
     }
 
     public function getFullProcName()
     {
+        $this->requireSetup();
         return $this->groupName . ":" . $this->procName;
     }
 
@@ -85,6 +87,7 @@ class Process
 
     public function getCommand()
     {
+        $this->requireSetup();
         return $this->command;
     }
 
@@ -110,6 +113,13 @@ class Process
     public function isSetup()
     {
         return !is_null($this->procName);
+    }
+
+    private function requireSetup()
+    {
+        if (!$this->isSetup()) {
+            throw new LogicException("Invalid use of an un-setup Process");
+        }
     }
 
     protected function buildPhpCommand($appPath)

@@ -68,7 +68,6 @@ class ProcessTest extends FiendishTestCase
     }
 
     public function testInvalidSetup() {
-        $em = $this->getContainer()->get('doctrine')->getEntityManager();
         $proc = new Process(
             parent::GROUP_NAME,
             'test_daemon',
@@ -79,5 +78,44 @@ class ProcessTest extends FiendishTestCase
         $this->setExpectedException('LogicException', 'persist');
         // ERROR: Have to persist first before calling initialSetup
         $proc->initialSetup(__DIR__);
+    }
+
+    public function testEarlyProcNameGet() {
+        $proc = new Process(
+            parent::GROUP_NAME,
+            'test_daemon',
+            'Foo/Bar',
+            []
+        );
+
+        $this->setExpectedException('LogicException', 'un-setup');
+        // ERROR: Have to persist first before getting proc name
+        $proc->getProcName();
+    }
+
+    public function testEarlyFullProcNameGet() {
+        $proc = new Process(
+            parent::GROUP_NAME,
+            'test_daemon',
+            'Foo/Bar',
+            []
+        );
+
+        $this->setExpectedException('LogicException', 'un-setup');
+        // ERROR: Have to persist first before getting proc name
+        $proc->getFullProcName();
+    }
+
+    public function testEarlyCommandGet() {
+        $proc = new Process(
+            parent::GROUP_NAME,
+            'test_daemon',
+            'Foo/Bar',
+            []
+        );
+
+        $this->setExpectedException('LogicException', 'un-setup');
+        // ERROR: Have to persist first before getting proc name
+        $proc->getCommand();
     }
 }
