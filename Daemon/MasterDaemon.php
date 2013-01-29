@@ -37,7 +37,7 @@ class MasterDaemon extends BaseDaemon
 
         while (true) {
             $this->heartbeat();
-            $this->manager->check_heartbeats();
+            $this->manager->checkHeartbeats();
 
             $read = array($rabbit['conn']->getSocket());
             $write = null;
@@ -46,6 +46,7 @@ class MasterDaemon extends BaseDaemon
             if ($changes === false) {
                 throw new \Exception("Stream_select failed");
             } elseif ($changes > 0) {
+                // TODO If a bunch of syncs queue up, should only run once.
                 $rabbit["ch"]->wait();
             }
 

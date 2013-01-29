@@ -2,11 +2,17 @@
 
 namespace DavidMikeSimon\FiendishBundle\Supervisor;
 
-use DavidMikeSimon\FiendishBundle\Entity\Process;
 use SupervisorClient\SupervisorClient;
+use DavidMikeSimon\FiendishBundle\Entity\Process;
+use DavidMikeSimon\FiendishBundle\Exception\RuntimeException;
+
+// TODO Maybe should refactor much of this into MasterDaemon?
 
 class Manager
 {
+    const MAX_REMOVAL_CYCLES = 200;
+    const REMOVAL_CYCLE_DELAY_MS = 100;
+
     private $container;
     public function getContainer()
     {
@@ -28,9 +34,9 @@ class Manager
     public function sync()
     {
         // TODO Check if we are the correct master process, die if not
-        // TODO Logging
 
         $supervisor = $this->getSupervisorClient();
+        $this->logMsg($supervisor, "Syncing...");
         $sv_procs = [];
         foreach ($supervisor->getAllProcessInfo() as $sp) {
             if ($sp["group"] == $this->getGroupName()) {
@@ -55,26 +61,44 @@ class Manager
         }
         // TODO Create the master daemon process row if it doesn't already exist
 
+        $procs_to_remove = [];
         foreach ($sv_procs as $sp) {
             if (!array_key_exists($sp["name"], $tgt_procs)) {
-                print("Removing " . $sp["name"] . "\n");
-                // TODO What if already stopped?
-                // FIXME If we're stopping a lot of processes, this might block
-                // for quite a while.
-
-                // This blocks until the process is stopped...
-                $supervisor->stopProcess($this->getGroupName() . ":" . $sp["name"]);
-                // ...because this does not work on running processes:
-                $supervisor->removeProcessFromGroup(
-                    $this->getGroupName(),
-                    $sp["name"]
-                );
+                $sp["tgtName"] = $this->getGroupName() . ":" . $sp["name"];
+                $procs_to_remove[] = $sp;
             }
+        }
+        $removal_cycles = 0;
+        while (count($procs_to_remove) > 0) {
+            foreach ($procs_to_remove as $idx=>$sp) {
+                $cur_status = $supervisor->getProcessInfo($sp["tgtName"]);
+                if ($cur_status["statename"] == "RUNNING") {
+                    // The second boolean argument sets it to non-blocking,
+                    // due to an issue where blocking stopProcess sometimes
+                    // never returns...
+                    $this->logMsg($supervisor, "Stopping " . $sp["name"]);
+                    $supervisor->stopProcess($sp["tgtName"], false);
+                } elseif ($this->isStoppedState($cur_status["statename"])) {
+                    $this->logMsg($supervisor, "Removing " . $sp["name"]);
+                    $supervisor->removeProcessFromGroup(
+                        $this->getGroupName(),
+                        $sp["name"]
+                    );
+                    unset($procs_to_remove[$idx]);
+                }
+            }
+
+            ++$removal_cycles;
+            if ($removal_cycles > self::MAX_REMOVAL_CYCLES) {
+                throw new RuntimeException("Supervisor unable to stop processes");
+            }
+
+            usleep(self::REMOVAL_CYCLE_DELAY_MS * 1000);
         }
 
         foreach ($tgt_procs as $tp) {
             if (!array_key_exists($tp->getProcName(), $sv_procs)) {
-                print("Adding " . $tp->getProcName() . "\n");
+                $this->logMsg($supervisor, "Adding " . $tp->getProcName());
                 $supervisor->addProgramToGroup(
                     $this->getGroupName(),
                     $tp->getProcName(), [
@@ -87,10 +111,12 @@ class Manager
             }
         }
 
+        // TODO Use multicall.
         $em->flush();
+        $this->logMsg($supervisor, "Sync finished");
     }
 
-    public function check_heartbeats()
+    public function checkHeartbeats()
     {
         // TODO
     }
@@ -99,5 +125,16 @@ class Manager
     {
         // TODO Specify via config file
         return new SupervisorClient("unix:///var/run/supervisor.sock", 0, 10);
+    }
+
+    private function logMsg($supervisor, $msg)
+    {
+        $supervisor->logMessage("(Fiendish) " . $this->groupName . " Master: $msg");
+        print(date(\DateTime::W3C) . " " . $msg . "\n");
+    }
+
+    private function isStoppedState($statename)
+    {
+        return in_array($statename, ["STOPPED", "FATAL", "EXITED", "UNKNOWN"]);
     }
 }
