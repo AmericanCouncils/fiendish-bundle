@@ -6,16 +6,14 @@ execution.
 ## Installation
 
 First you need to install and set up these non-PHP dependencies:
-    * [RabbitMQ](http://www.rabbitmq.com),
-    * [Supervisor](http://supervisord.org/)
-    * [Twiddler](https://github.com/mnaberez/supervisor_twiddler).
+* [RabbitMQ](http://www.rabbitmq.com),
+* [Supervisor](http://supervisord.org/)
+* [Twiddler](https://github.com/mnaberez/supervisor_twiddler).
 
-(You have to restart Supervisor after installing Twiddler; running
-the `update` command won't allow new extensions to be loaded)
-
-You will also need to make sure that you have the `php` command
+You will also need to make sure that you have the PHP executable
 available from the command line. On Ubuntu, that means installing
-the
+the `php5-cli` package, and on other distributions it's most
+likely something similar.
 
 Next, install fiendish-bundle into your Symfony2 app via composer:
 
@@ -48,22 +46,24 @@ be adding and removing processes in that group dynamically.
 Daemons are implemented as classes that derive from `Fiendish\Daemon\BaseDaemon`.
 Here's an example daemon for Foobar:
 
-    namespace SomeRandomCoder\FoobarBundle\Daemon;
+```php
+namespace SomeRandomCoder\FoobarBundle\Daemon;
 
-    use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
+use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
 
-    class UselessDaemon extends Daemon
+class UselessDaemon extends Daemon
+{
+    public function run($arg = null)
     {
-        public function run($arg = null)
-        {
-            while(true) {
-                print("FOO $arg!\n");
-                sleep(1);
-                print("BAR $arg!\n");
-                sleep(1);
-            }
+        while(true) {
+            print("FOO $arg!\n");
+            sleep(1);
+            print("BAR $arg!\n");
+            sleep(1);
         }
     }
+}
+```
 
 The `run` method is called when your daemon starts. If your daemon is
 meant to stay up all the time, then `run` should never return.
@@ -83,18 +83,20 @@ outside the daemon will need to be accessed as `$arg->xyz` within.
 
 To start a daemon process, persist a Process object to the database:
 
-    use DavidMikeSimon\FiendishBundle\Entity\Process;
-    use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
+```php
+use DavidMikeSimon\FiendishBundle\Entity\Process;
+use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
 
-    $proc = new Process(
-        "foobar", // Group name
-        "useless_thing", // Name of this specific process
-        "SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon", // The daemon class
-        "fries and a shake" // The argument to be passed to run
-    );
-    $em->persist($proc);
-    $em->flush();
-    MasterDaemon::sendSyncRequest("foobar"); // This call does not block
+$proc = new Process(
+    "foobar", // Group name
+    "useless_thing", // Name of this specific process
+    "SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon", // The daemon class
+    "fries and a shake" // The argument to be passed to run
+);
+$em->persist($proc);
+$em->flush();
+MasterDaemon::sendSyncRequest("foobar"); // This call does not block
+```
 
 The master daemon for the group "foobar" will recieve that request via RabbitMQ.
 During a sync, the master daemon will add and remove processes from the Supervisor
