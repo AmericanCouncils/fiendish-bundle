@@ -16,6 +16,12 @@ abstract class FiendishTestCase extends WebTestCase
 {
     const GROUP_NAME = "testfiendish";
 
+    // This is the closest I can get to a constant array in PHP :-P
+    public static function getStoppedStates()
+    {
+        return ["STOPPED", "FATAL", "EXITED", "UNKNOWN"];
+    }
+
     private static $migrated = false;
     private static $supervisorClient = null;
 
@@ -83,9 +89,7 @@ abstract class FiendishTestCase extends WebTestCase
                 $is_master = $proc["name"] == self::GROUP_NAME . "_master";
                 $is_grouped = $proc["group"] == self::GROUP_NAME;
                 $is_stoppable = $proc["statename"] == "RUNNING";
-                $is_removable = in_array($proc["statename"],
-                    ["STOPPED", "FATAL", "EXITED", "UNKNOWN"]
-                );
+                $is_removable = in_array($proc["statename"], self::getStoppedStates());
 
                 if (!($is_master || $is_grouped)) {
                     // This process isn't one of ours
@@ -130,7 +134,7 @@ abstract class FiendishTestCase extends WebTestCase
     {
         $supervisor = self::getSupervisorClient();
         $proc_info = $supervisor->getProcessInfo(self::GROUP_NAME . "_master");
-        if ($proc_info["statename"] == "STOPPED") {
+        if (in_array($proc_info["statename"], self::getStoppedStates())) {
             $supervisor->startProcess(self::GROUP_NAME . "_master");
         } else {
             throw new \Exception("Required master for this test, but it was already running");
