@@ -48,18 +48,7 @@ abstract class FiendishTestCase extends WebTestCase
 
     public function setUp()
     {
-        $supervisor = self::getSupervisorClient();
-        foreach($supervisor->getAllProcessInfo() as $proc) {
-            $is_master = $proc["name"] == self::GROUP_NAME . "_master";
-            $is_grouped = $proc["group"] == self::GROUP_NAME;
-            $is_running = $proc["statename"] == "RUNNING";
-            if ($is_running && ($is_master || $is_grouped)) {
-                $supervisor->stopProcess($proc["name"]);
-            }
-            if ($is_grouped) {
-                $supervisor->removeProcessFromGroup(self::GROUP_NAME, $proc["name"]);
-            }
-        }
+        $this->killAllSupervisorProcs();
 
         if (!self::$migrated) {
             // FIXME: Ugly, we should avoid using a static variable to do this
@@ -77,6 +66,64 @@ abstract class FiendishTestCase extends WebTestCase
         }
 
         parent::setUp();
+    }
+
+    protected function killAllSupervisorProcs()
+    {
+        $supervisor = self::getSupervisorClient();
+        $cycle = 1;
+        while (true) {
+            // There are various states a process can be in while Supervisor
+            // tries to restart it. We can only stop processes that are
+            // RUNNING, and only remove processes that are STOPPED. Any
+            // other states, we have to wait for them to change.
+            $weirdStatesCount = 0;
+
+            foreach($supervisor->getAllProcessInfo() as $proc) {
+                $is_master = $proc["name"] == self::GROUP_NAME . "_master";
+                $is_grouped = $proc["group"] == self::GROUP_NAME;
+                $is_stoppable = $proc["statename"] == "RUNNING";
+                $is_removable = in_array($proc["statename"],
+                    ["STOPPED", "FATAL", "EXITED", "UNKNOWN"]
+                );
+
+                if (!($is_master || $is_grouped)) {
+                    // This process isn't one of ours
+                    continue;
+                }
+
+                if ($is_stoppable) {
+                    $tgt_name = $proc["name"];
+                    if ($is_grouped) {
+                        $tgt_name = $proc["group"] . ":" . $tgt_name;
+                    }
+                    $supervisor->stopProcess($tgt_name);
+                    // The stopProcess call blocks until process is dead
+                    $is_removable = true;
+                }
+
+                if ($is_removable && $is_grouped) {
+                    $supervisor->removeProcessFromGroup(self::GROUP_NAME, $proc["name"]);
+                }
+
+                if (!($is_removable || $is_stoppable)) {
+                    ++$weirdStatesCount;
+                }
+            }
+
+            if ($weirdStatesCount == 0) {
+                break;
+            }
+            ++$cycle;
+            if ($cycle > 50) {
+                print("-----\n");
+                print("SUPERVISOR STATE:\n");
+                var_dump($supervisor->getAllProcessInfo());
+                print("\n-----\n\n");
+                throw new \Exception("Unable to clear supervisor state for test group");
+            }
+            usleep(1000 * 300); // 300 ms
+        }
     }
 
     protected function requiresMaster()

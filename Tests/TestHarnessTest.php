@@ -11,9 +11,15 @@ class TestHarnessTest extends FiendishTestCase
         $this->requiresMaster();
 
         $supervisor = parent::getSupervisorClient();
-        $proc_info = $supervisor->getProcessInfo(parent::GROUP_NAME . "_master");
-        $this->assertEquals(parent::GROUP_NAME . "_master", $proc_info["name"]);
-        $this->assertEquals("RUNNING", $proc_info["statename"]);
-        $this->assertLessThanOrEqual(3, $proc_info["now"] - $proc_info["start"]);
+        $procInfo = $supervisor->getProcessInfo(parent::GROUP_NAME . "_master");
+        $this->assertEquals("RUNNING", $procInfo["statename"]);
+        $this->assertLessThanOrEqual(3, $procInfo["now"] - $procInfo["start"]);
+    }
+
+    public function testMasterDaemonNotStartedByDefault()
+    {
+        $supervisor = parent::getSupervisorClient();
+        $procInfo = $supervisor->getProcessInfo(parent::GROUP_NAME . "_master");
+        $this->assertEquals("STOPPED", $procInfo["statename"]);
     }
 }
