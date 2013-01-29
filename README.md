@@ -42,7 +42,7 @@ be adding and removing processes in that group dynamically.
 
 ## Writing a Daemon
 
-Daemons are implemented as classes that derive from `Fiendish\Daemon\BaseDaemon`.
+Daemons are implemented as classes that derive from `BaseDaemon`.
 Here's an example daemon for Foobar:
 
 ```php
@@ -77,7 +77,7 @@ which can in turn be nested arbitrarily deep with other JSON-serializable
 objects.
 
 Be aware that PHP's json deserialization turns associative arrays
-(i.e. arrays with string keys) into objects, so that what was set via `$arg["xyz"]`
+(i.e. arrays with string keys) into objects, so that anything put to `$arg["xyz"]`
 outside the daemon will need to be accessed as `$arg->xyz` within.
 
 ## Starting and Stopping Daemon Processes
@@ -109,17 +109,25 @@ will be killed and removed from the group.
 
 ## Debugging
 
-Supervisor will keep track of everything printed out by your daemons,
-so your best bet for figuring out problems with your daemons
+Supervisor will keep track of everything printed out by your daemons
+and all activity related to them starting and stopping.
+Yur best bet for figuring out any problems with your daemons
 is to use the Supervisor console:
 
     $ sudo supervisorctl
     > status
     foobar_master              RUNNING    pid 8263, uptime 1:35:03
     foobar:useless_thing.37    FATAL
-    > tail foobar:useless_thing.37
+    > tail -f foobar:useless_thing.37
     FOO fries and a shake!
     BAR fries and a shake!
     FOO fries and a shake!
     BAR fries and a shake!
     ...  (All print output and PHP error output ends up here) ...
+
+(The number 37 in the process name above refers to the Process row
+with id 37.)
+
+## API Docs
+
+Coming to a theater near you, pretty soon.
