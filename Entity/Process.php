@@ -129,7 +129,7 @@ class Process
             $consolePath,
             "-v",
             "fiendish:internal-daemon",
-            "\"" . addslashes($daemonSpec) . "\""
+            escapeshellarg($daemonSpec)
             ]);
     }
 }

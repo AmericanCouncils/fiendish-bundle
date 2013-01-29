@@ -1,8 +1,7 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests\Entity;
+namespace DavidMikeSimon\FiendishBundle\Tests;
 
-use DavidMikeSimon\FiendishBundle\Tests\FiendishTestCase;
 use DavidMikeSimon\FiendishBundle\Entity\Process;
 
 class ProcessTest extends FiendishTestCase
@@ -18,8 +17,11 @@ class ProcessTest extends FiendishTestCase
             "nesting_is" => [
                 "fun",
                 "exciting",
-                "profitable",
-                "step 1"
+                "supercilious",
+                "step 1 of our 3 step plan",
+                "but don't ask about step 2",
+                "we don't know what this \"step 2\" is",
+                "step 3 is profit though"
             ]
         ];
         $proc = new Process(
@@ -49,10 +51,10 @@ class ProcessTest extends FiendishTestCase
 
         $consoleCmd = "fiendish:internal-daemon";
         $this->assertContains($consoleCmd, $proc->getCommand());
-        $daemonSpecJsonShellEsc = substr(
+        $daemonSpecJsonShellEsc = trim(substr( // Get only the JSON part of the command
             $proc->getCommand(),
             strpos($proc->getCommand(), $consoleCmd) + strlen($consoleCmd)
-        );
+        ));
         $daemonSpecJson = `echo $daemonSpecJsonShellEsc`; // Remove shell escapes
         $daemonSpec = json_decode($daemonSpecJson);
 
