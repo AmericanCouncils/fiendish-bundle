@@ -35,7 +35,7 @@ the daemons for your specific app. Here's an example of a config
     command=/usr/bin/php /var/www/foobar/app/console fiendish:master-daemon foobar
     redirect_stderr=true
 
-    [group:beatbox]
+    [group:foobar]
 
 The group section is deliberately empty in the config; Fiendish will
 be adding and removing processes in that group dynamically.
