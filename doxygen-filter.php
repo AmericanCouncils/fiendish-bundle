@@ -80,6 +80,7 @@ function process_markdown($t)
 {
     $t = "\mainpage\n$t";
     $t = preg_replace("/## API Doc.+?(\n#|$)/s", "\\1", $t);
+    $t = str_replace("```", "~~~", $t);
 
     echo($t);
 }
