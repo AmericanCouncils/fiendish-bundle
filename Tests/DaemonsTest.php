@@ -73,4 +73,6 @@ class DaemonsTest extends FiendishTestCase
         $supervisor->logMessage("POINT B");
         $this->assertTrue($removed);
     }
+
+    // TODO Test starting multiple copies of the same daemon with the same config
 }
