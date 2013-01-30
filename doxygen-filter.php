@@ -32,21 +32,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
 */
-
-$source = file_get_contents($_SERVER['argv'][1]);
-$tokens = token_get_all($source);
-
-$buffer = null;
-foreach ($tokens as $token) {
-    if (is_string($token)) {
-        if ((! empty($buffer)) && ($token == ';')) {
-            echo $buffer;
-            unset($buffer);
-        }
-        echo $token;
-    } else {
-        list($id, $text) = $token;
-        switch ($id) {
+function process_php($source)
+{
+    $tokens = token_get_all($source);
+    $buffer = null;
+    foreach ($tokens as $token) {
+        if (is_string($token)) {
+            if ((! empty($buffer)) && ($token == ';')) {
+                echo $buffer;
+                unset($buffer);
+            }
+            echo $token;
+        } else {
+            list($id, $text) = $token;
+            switch ($id) {
             case T_DOC_COMMENT :
                 $text = addcslashes($text, '\\');
                 if (preg_match('#@var\s+[^\$]*\*/#ms', $text)) {
@@ -72,7 +71,24 @@ foreach ($tokens as $token) {
                     echo $text;
                 }
                 break;
+            }
         }
     }
 }
-?>
+
+function process_markdown($t)
+{
+    $t = "\mainpage\n$t";
+    $t = preg_replace("/## API Doc.+?(\n#|$)/s", "\\1", $t);
+
+    echo($t);
+}
+
+$path = $_SERVER['argv'][1];
+$source = file_get_contents($path);
+
+if (preg_match("/\\.php$/", $path)) {
+    process_php($source);
+} else {
+    process_markdown($source);
+}

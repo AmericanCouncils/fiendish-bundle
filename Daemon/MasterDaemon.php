@@ -13,8 +13,6 @@ use PhpAmqpLib\Message\AMQPMessage;
  * just use Supervisor to start it up, since you'll be setting that
  * up anyways; however, if you do that, do not put the master daemon
  * in the same Supervisor group that contains all your app's daemons.
- *
- * @api
  */
 class MasterDaemon extends BaseDaemon
 {
