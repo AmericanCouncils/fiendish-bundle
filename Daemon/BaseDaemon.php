@@ -4,7 +4,6 @@ namespace DavidMikeSimon\FiendishBundle\Daemon;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use PhpAmqpLib\Connection\AMQPConnection;
 
 /**
  * Base class for all Fiendish daemon implementations
@@ -52,7 +51,7 @@ abstract class BaseDaemon implements ContainerAwareInterface
      *
      * @param $initialState Arguments for this daemon instance from the Process.
      */
-    abstract public function run($initialState = null);
+    abstract public function run($initialState);
 
     protected function heartbeat()
     {

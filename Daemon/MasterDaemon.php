@@ -3,6 +3,7 @@
 namespace DavidMikeSimon\FiendishBundle\Daemon;
 
 use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
+use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
@@ -17,7 +18,7 @@ class MasterDaemon extends BaseDaemon
     private $manager;
     private $groupName;
 
-    public function run($initialState = null)
+    public function run($initialState)
     {
         $groupName = $initialState->group;
 

@@ -28,7 +28,7 @@ class Process
      * @param $daemonClass Fully-qualified path to the Daemon class to be ran.
      * @param $initialState A JSON-encodable object to pass to the daemon's run method.
      */
-    public function __construct($groupName, $daemonName, $daemonClass, $initialState)
+    public function __construct($groupName, $daemonName, $daemonClass, $initialState = null)
     {
         $this->groupName = $groupName;
         $this->daemonName = $daemonName;
