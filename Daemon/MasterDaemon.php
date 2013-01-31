@@ -8,11 +8,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 /**
  * Daemon that manages a group of Fiendish processes in Supervisor.
  *
- * You can start this daemon manually by running the console command
- * `fiendish:master-daemon mygroupname`. It's handy to
- * just use Supervisor to start it up, since you'll be setting that
- * up anyways; however, if you do that, do not put the master daemon
- * in the same Supervisor group that contains all your app's daemons.
+ * Start this daemon with Command\MasterDaemonCommand.
  */
 class MasterDaemon extends BaseDaemon
 {
@@ -67,6 +63,8 @@ class MasterDaemon extends BaseDaemon
 
     /**
      * Causes a running master daemon to implement any Process changes.
+     *
+     * Applies only to the daemon managing the given group.
      */
     public static function sendSyncRequest($groupName)
     {
