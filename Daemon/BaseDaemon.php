@@ -45,7 +45,7 @@ abstract class BaseDaemon implements ContainerAwareInterface
     }
 
     /**
-     * Implements the daemon's functionality.
+     * Implement this abstract method with your daemon's functionality.
      *
      * This method should never return.
      *
