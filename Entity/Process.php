@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use DavidMikeSimon\FiendishBundle\Exception\LogicException;
 
 /**
+ * Represents a running (or requested-to-be running) daemon process
+ *
  * @ORM\Entity
  */
 class Process

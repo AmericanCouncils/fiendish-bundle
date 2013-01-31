@@ -32,8 +32,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
 */
+
 function process_php($source)
 {
+    // TODO This will have terrible results if I want to do inline
+    // code examples that include "use" or "extends" or "implements"
+    $source = str_replace("DavidMikeSimon\\FiendishBundle\\", "", $source);
+
     $tokens = token_get_all($source);
     $buffer = null;
     foreach ($tokens as $token) {
@@ -78,9 +83,11 @@ function process_php($source)
 
 function process_markdown($t)
 {
+    // Convert from GitHub markdown to Doxygen markdown
     $t = "\mainpage\n$t";
     $t = preg_replace("/## API Doc.+?(\n#|$)/s", "\\1", $t);
     $t = str_replace("```", "~~~", $t);
+    // TODO Link references from DavidMikeSimon\FiendishBundle\X to X
 
     echo($t);
 }

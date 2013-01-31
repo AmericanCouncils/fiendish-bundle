@@ -8,6 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
 
+/**
+ * Command that starts the manager for your daemon processes
+ */
 class MasterDaemonCommand extends Command
 {
     protected function configure()

@@ -6,6 +6,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use PhpAmqpLib\Connection\AMQPConnection;
 
+/**
+ * Base class for all Fiendish daemon implementations
+ */
 abstract class BaseDaemon implements ContainerAwareInterface
 {
     private $container;
