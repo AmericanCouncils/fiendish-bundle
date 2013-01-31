@@ -6,7 +6,7 @@ use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
- * Daemon that manages a group of Fiendish processes in Supervisor
+ * Daemon that manages a group of Fiendish processes in Supervisor.
  *
  * You can start this daemon manually by running the console command
  * `fiendish:master-daemon mygroupname`. It's handy to
@@ -65,7 +65,9 @@ class MasterDaemon extends BaseDaemon
         }
     }
 
-    // To be called from outside the master daemon
+    /**
+     * Causes a running master daemon to implement any Process changes.
+     */
     public static function sendSyncRequest($groupName)
     {
         $rabbit = self::getRabbit();
