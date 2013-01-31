@@ -54,7 +54,7 @@ function process_php($source)
             case T_DOC_COMMENT :
                 $text = preg_replace('/@ORM[^\n\r]+(\n\r?)/', '\\1', $text);
                 $text = preg_replace(
-                    '/(\S+)\\\\(\S+)/',
+                    '/([^\s.-]+)\\\\([^\s.-]+)/',
                     '[$1\\\\\\\\$2](@ref $1::$2)',
                     $text
                 );
