@@ -76,8 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Fiendish-Bundle Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>Fiendish</h1>
-<p>Fiendish allows you to write daemons within Symfony2, and control their execution.</p>
+<div class="textblock"><p><b>Get downloads and source</b> at the <a href="http://github.com/DavidMikeSimon/fiendish-bundle">GitHub Project Page</a>.</p>
 <h2>Installation</h2>
 <p>First you need to install and set up these non-PHP dependencies:</p>
 <ul>
@@ -98,7 +97,7 @@ command=/usr/bin/php /var/www/foobar/app/console fiendish:master-daemon foobar
 redirect_stderr=true
 
 [group:foobar]
-</pre><p>The group section is deliberately empty in the config; Fiendish will be adding and removing processes in that group dynamically.</p>
+</pre><p>The group section is deliberately empty; Fiendish will be adding and removing processes in that group dynamically.</p>
 <h2>Writing a Daemon</h2>
 <p>Daemons are implemented as classes that derive from <code>BaseDaemon</code>. Here's an example daemon for Foobar:</p>
 <div class="fragment"><div class="line"><span class="keyword">namespace </span>SomeRandomCoder\FoobarBundle\Daemon;</div>
@@ -135,7 +134,7 @@ redirect_stderr=true
 <div class="line">$em-&gt;persist($proc);</div>
 <div class="line">$em-&gt;flush();</div>
 <div class="line">MasterDaemon::sendSyncRequest(<span class="stringliteral">&quot;foobar&quot;</span>); <span class="comment">// This call does not block</span></div>
-</div><!-- fragment --><p>The master daemon for the group "foobar" will recieve that request via RabbitMQ. It will add processes to the Supervisor group as necessary to match the processes listed in the table.</p>
+</div><!-- fragment --><p>When the master daemon for the group "foobar" recieves that request, it will add processes to the Supervisor group as necessary to match the processes listed in the table.</p>
 <p>To stop a daemon process, delete the Process and send a sync request. Supervisor's state will be updated, and your daemon process will be killed and removed from the group.</p>
 <h2>Debugging</h2>
 <p>Supervisor will keep track of everything printed out by your daemons and all activity related to them starting and stopping. Yur best bet for figuring out any problems with your daemons is to use the Supervisor console: </p>
@@ -153,7 +152,7 @@ BAR fries and a shake!
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 31 2013 14:34:45 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jan 31 2013 14:51:10 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
