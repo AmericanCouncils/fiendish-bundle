@@ -13,8 +13,8 @@ use DavidMikeSimon\FiendishBundle\Exception\LogicException;
  * and stop instances of your daemons.
  *
  * After saving a Process to the database, or removing one from it, you must
- * call the static method Daemon\MasterDaemon::sendSyncRequest to have your
- * changes come into effect.
+ * call sendSyncRequest() on the corresponding Supervisor/Group to have your
+ * changes come into effect. See README.md for an example of this.
  *
  * @ORM\Entity
  */

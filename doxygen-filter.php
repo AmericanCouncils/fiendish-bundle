@@ -90,6 +90,7 @@ function process_markdown($t)
 {
     // Replace the original leader section with a link to GitHub
     $t = preg_replace("/^.+?##/s", "##", $t, 1);
+    $t = "(This file is also available as `README.md` in the repository)\n\n$t";
     $t = "**Get downloads and source** at the [GitHub Project Page](http://github.com/DavidMikeSimon/fiendish-bundle).\n\n$t";
 
     // Convert from GitHub markdown to Doxygen markdown

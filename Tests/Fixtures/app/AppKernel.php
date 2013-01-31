@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new \DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle(),
             new \DavidMikeSimon\FiendishBundle\Tests\Fixtures\DavidMikeSimonFiendishTestBundle(),
+            new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
         );
     }
 

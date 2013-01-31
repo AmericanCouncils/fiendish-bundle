@@ -23,3 +23,17 @@ doctrine:
 
 doctrine_migrations:
     dir_name: "%kernel.root_dir%/../../../DoctrineMigrations"
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host: "localhost"
+            port: 5672
+            user: "guest"
+            password: "guest"
+            vhost: "/"
+
+david_mike_simon_fiendish:
+    groups:
+        testfiendish:
+            process_user: "www-data" 

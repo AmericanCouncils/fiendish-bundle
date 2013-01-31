@@ -21,10 +21,11 @@ class DaemonsTest extends FiendishTestCase
         );
         $em->persist($proc);
         $em->flush();
-        MasterDaemon::sendSyncRequest(parent::GROUP_NAME);
+
+        $grp = $this->getContainer()->get('david_mike_simon_fiendish.groups.' . parent::GROUP_NAME);
+        $grp->sendSyncRequest();
 
         $supervisor = parent::getSupervisorClient();
-
         $ok = false;
         for ($i = 1; $i < 50; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
@@ -53,9 +54,8 @@ class DaemonsTest extends FiendishTestCase
         $this->assertContains($procInfo["statename"], ["RUNNING", "STARTING"]);
         $em->remove($proc);
         $em->flush();
-        MasterDaemon::sendSyncRequest(parent::GROUP_NAME);
+        $grp->sendSyncRequest();
 
-        $supervisor->logMessage("POINT A");
         $removed = false;
         for ($i = 1; $i < 50; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
@@ -70,7 +70,6 @@ class DaemonsTest extends FiendishTestCase
                 break;
             }
         }
-        $supervisor->logMessage("POINT B");
         $this->assertTrue($removed);
     }
 

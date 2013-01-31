@@ -18,12 +18,17 @@ the `php5-cli` package, and on other distributions it's most
 likely something similar.
 
 Next, install fiendish-bundle into your Symfony2 app via composer:
-
     
     "require": {
         ...
         "davidmikesimon/fiendish-bundle": "dev-master"
     }
+
+And add both Fiendish and the RabbitMQ bundle to your `app/AppKernel.php`
+bundles list:
+    
+    new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+    new DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle()
 
 Then you'll need to set up the `Process` table in your database. For now,
 that means manually installing and running the migration file
@@ -41,6 +46,16 @@ the daemons for your specific app. Here's an example of a config
 
 The group section is deliberately empty; Fiendish will
 be adding and removing processes in that group dynamically.
+
+You'll also want to add a corresponding section to your Symfony
+config file:
+
+    fiendish:
+        groups:
+            foobar:
+                process_user: "www-data" 
+
+`process_user` is the UNIX user that your daemons will run as.
 
 ## Writing a Daemon
 
@@ -99,16 +114,16 @@ $proc = new Process(
 );
 $em->persist($proc);
 $em->flush();
-MasterDaemon::sendSyncRequest("foobar"); // This call does not block
+$this->get("fiendish.groups.foobar")->sendSyncRequest() // This call does not block
 ```
 
 When the master daemon for the group "foobar" recieves that request,
 it will add processes to the Supervisor
 group as necessary to match the processes listed in the table.
 
-To stop a daemon process, delete the Process and send a
-sync request. Supervisor's state will be updated, and your daemon process
-will be killed and removed from the group.
+To stop a running daemon, delete the Process and send another
+sync request. Your daemon process will be killed and removed from the
+Supervisor group.
 
 ## Debugging
 

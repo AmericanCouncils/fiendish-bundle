@@ -3,8 +3,6 @@
 namespace DavidMikeSimon\FiendishBundle\Daemon;
 
 use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
-use PhpAmqpLib\Connection\AMQPConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * Daemon that manages a group of Fiendish processes in Supervisor.
@@ -24,10 +22,12 @@ class MasterDaemon extends BaseDaemon
 
         $this->manager = new Manager($groupName, $this->getContainer());
 
-        $rabbit = self::getRabbit();
-        $queue = $rabbit["ch"]->queue_declare($groupName . "_master")[0];
+        // TODO Get connection name from config
+        $rabbit = $this->getContainer()->get('old_sound_rabbit_mq.connection.default');
+        $ch = $rabbit->channel();
+        $queue = $ch->queue_declare($groupName . "_master")[0];
 
-        $rabbit["ch"]->basic_consume($queue, "master",
+        $ch->basic_consume($queue, "master",
             false, false, true, false, // 3rd true: Exclusive consumer
             function($msg) {
                 // TODO Log both valid and invalid messages
@@ -45,7 +45,7 @@ class MasterDaemon extends BaseDaemon
             $this->heartbeat();
             $this->manager->checkHeartbeats();
 
-            $read = array($rabbit['conn']->getSocket());
+            $read = array($rabbit->getSocket());
             $write = null;
             $except = null;
             $changes = stream_select($read, $write, $except, self::HEARTBEAT_DELAY);
@@ -53,34 +53,12 @@ class MasterDaemon extends BaseDaemon
                 throw new \Exception("Stream_select failed");
             } elseif ($changes > 0) {
                 // TODO If a bunch of syncs queue up, should only run once.
-                $rabbit["ch"]->wait();
+                $ch->wait();
             }
 
 
             // TODO If we've been up a while, restart ourselves to avoid
             // any possible PHP weirdness/leaks.
         }
-    }
-
-    /**
-     * Causes a running master daemon to implement any Process changes.
-     *
-     * Applies only to the daemon managing the given group.
-     */
-    public static function sendSyncRequest($groupName)
-    {
-        $rabbit = self::getRabbit();
-        $queue = $rabbit["ch"]->queue_declare($groupName . "_master")[0];
-        $msg = new AMQPMessage("sync");
-        $rabbit["ch"]->basic_publish($msg, "", $groupName . "_master");
-    }
-
-    protected static function getRabbit()
-    {
-        // TODO Specify target server via a config file
-        $conn = new AMQPConnection("localhost", 5672, "guest", "guest");
-        $ch = $conn->channel();
-
-        return ["conn" => $conn, "ch" => $ch];
     }
 };
