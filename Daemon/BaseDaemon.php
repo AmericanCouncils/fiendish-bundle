@@ -12,16 +12,28 @@ use PhpAmqpLib\Connection\AMQPConnection;
 abstract class BaseDaemon implements ContainerAwareInterface
 {
     private $container;
+
+    /**
+     * Returns the Symfony service container.
+     */
     protected function getContainer()
     {
         return $this->container;
     }
+
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
     private $name;
+
+    /**
+     * Returns the name of this daemon process.
+     *
+     * This is the same as the daemonName parameter
+     * in Entity\Process.
+     */
     public function getName()
     {
         return $this->name;
@@ -33,19 +45,17 @@ abstract class BaseDaemon implements ContainerAwareInterface
         $this->setContainer($container);
     }
 
+    /**
+     * Implements the daemon's functionality.
+     *
+     * This method should never return.
+     *
+     * @param $initialState Arguments for this daemon instance from the Process.
+     */
     abstract public function run($initialState = null);
 
     protected function heartbeat()
     {
         // TODO
-    }
-
-    protected static function getRabbit()
-    {
-        // TODO Specify target server via a config file
-        $conn = new AMQPConnection("localhost", 5672, "guest", "guest");
-        $ch = $conn->channel();
-
-        return ["conn" => $conn, "ch" => $ch];
     }
 }

@@ -73,4 +73,13 @@ class MasterDaemon extends BaseDaemon
         $msg = new AMQPMessage("sync");
         $rabbit["ch"]->basic_publish($msg, "", $groupName . "_master");
     }
+
+    protected static function getRabbit()
+    {
+        // TODO Specify target server via a config file
+        $conn = new AMQPConnection("localhost", 5672, "guest", "guest");
+        $ch = $conn->channel();
+
+        return ["conn" => $conn, "ch" => $ch];
+    }
 };
