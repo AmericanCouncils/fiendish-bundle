@@ -52,7 +52,7 @@ namespace SomeRandomCoder\FoobarBundle\Daemon;
 
 use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
 
-class UselessDaemon extends Daemon
+class UselessDaemon extends BaseDaemon
 {
     public function run($arg = null)
     {
