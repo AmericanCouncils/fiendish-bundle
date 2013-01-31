@@ -88,9 +88,12 @@ function process_php($source)
 
 function process_markdown($t)
 {
+    // Replace the original leader section with a link to GitHub
+    $t = preg_replace("/^.+?##/s", "##", $t, 1);
+    $t = "**Get downloads and source** at the [GitHub Project Page](http://github.com/DavidMikeSimon/fiendish-bundle).\n\n$t";
+
     // Convert from GitHub markdown to Doxygen markdown
     $t = "\mainpage\n$t";
-    $t = preg_replace("/## API Doc.+?(\n#|$)/s", "\\1", $t);
     $t = str_replace("```", "~~~", $t);
 
     // TODO Link references from DavidMikeSimon\FiendishBundle\X to X

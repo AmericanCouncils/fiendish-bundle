@@ -1,7 +1,9 @@
-# Fiendish
+# Fiendish-Bundle
 
-Fiendish allows you to write daemons within Symfony2, and control their
+Fiendish-bundle allows you to write daemons within Symfony2, and control their
 execution.
+
+[API Documentation](http://davidmikesimon.github.com/annotated.html)
 
 ## Installation
 
@@ -37,7 +39,7 @@ the daemons for your specific app. Here's an example of a config
 
     [group:foobar]
 
-The group section is deliberately empty in the config; Fiendish will
+The group section is deliberately empty; Fiendish will
 be adding and removing processes in that group dynamically.
 
 ## Writing a Daemon
@@ -100,8 +102,8 @@ $em->flush();
 MasterDaemon::sendSyncRequest("foobar"); // This call does not block
 ```
 
-The master daemon for the group "foobar" will recieve that request via RabbitMQ.
-It will add processes to the Supervisor
+When the master daemon for the group "foobar" recieves that request,
+it will add processes to the Supervisor
 group as necessary to match the processes listed in the table.
 
 To stop a daemon process, delete the Process and send a
@@ -128,7 +130,3 @@ is to use the Supervisor console:
 
 (The number 37 in the process name above refers to the Process row
 with id 37.)
-
-## API Docs
-
-Coming to a theater near you, pretty soon.
