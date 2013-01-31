@@ -83,6 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_daemon_1_1_master_daemon-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -102,15 +103,57 @@ Inheritance diagram for Daemon\MasterDaemon:</div>
 </map>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a0f51efccb5f85b1dd73a6d45cc6bad45"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_master_daemon.html#a0f51efccb5f85b1dd73a6d45cc6bad45">run</a> ($initialState=null)</td></tr>
+<tr class="memdesc:a0f51efccb5f85b1dd73a6d45cc6bad45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the daemon's functionality.  <a href="#a0f51efccb5f85b1dd73a6d45cc6bad45"></a><br/></td></tr>
+<tr class="inherit_header pub_methods_class_daemon_1_1_base_daemon"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_daemon_1_1_base_daemon')"><img src="closed.png" alt="-"/>&nbsp;Public Member Functions inherited from <a class="el" href="class_daemon_1_1_base_daemon.html">Daemon\BaseDaemon</a></td></tr>
+<tr class="memitem:ad1676399b16e43b76c7f31adfefbaaa0 inherit pub_methods_class_daemon_1_1_base_daemon"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#ad1676399b16e43b76c7f31adfefbaaa0">getName</a> ()</td></tr>
+<tr class="memdesc:ad1676399b16e43b76c7f31adfefbaaa0 inherit pub_methods_class_daemon_1_1_base_daemon"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of this daemon process.  <a href="#ad1676399b16e43b76c7f31adfefbaaa0"></a><br/></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ab50600be904ef0e1c92a6b8c914e712b"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_master_daemon.html#ab50600be904ef0e1c92a6b8c914e712b">sendSyncRequest</a> ($groupName)</td></tr>
 <tr class="memdesc:ab50600be904ef0e1c92a6b8c914e712b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Causes a running master daemon to implement any Process changes.  <a href="#ab50600be904ef0e1c92a6b8c914e712b"></a><br/></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_methods_class_daemon_1_1_base_daemon"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_daemon_1_1_base_daemon')"><img src="closed.png" alt="-"/>&nbsp;Protected Member Functions inherited from <a class="el" href="class_daemon_1_1_base_daemon.html">Daemon\BaseDaemon</a></td></tr>
+<tr class="memitem:ad988d4a81188986c11b10c5bbaed0d4e inherit pro_methods_class_daemon_1_1_base_daemon"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad988d4a81188986c11b10c5bbaed0d4e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#ad988d4a81188986c11b10c5bbaed0d4e">getContainer</a> ()</td></tr>
+<tr class="memdesc:ad988d4a81188986c11b10c5bbaed0d4e inherit pro_methods_class_daemon_1_1_base_daemon"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Symfony service container. <br/></td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Daemon that manages a group of Fiendish processes in Supervisor. </p>
 <p>Start this daemon with <a class="el" href="class_command_1_1_master_daemon_command.html">Command</a>. "Command\\MasterDaemonCommand." </p>
 </div><h2>Member Function Documentation</h2>
+<a class="anchor" id="a0f51efccb5f85b1dd73a6d45cc6bad45"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Daemon\MasterDaemon::run </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$initialState</em> = <code>null</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Implements the daemon's functionality. </p>
+<p>This method should never return.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$initialState</td><td>Arguments for this daemon instance from the Process. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_daemon_1_1_base_daemon.html#a7b4285bac607114391cc45235472eb8b">Daemon\BaseDaemon</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ab50600be904ef0e1c92a6b8c914e712b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -144,7 +187,7 @@ Static Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 31 2013 13:08:07 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jan 31 2013 14:29:06 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
