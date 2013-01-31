@@ -3,7 +3,7 @@
 Fiendish-bundle allows you to write daemons within Symfony2, and control their
 execution.
 
-[API Documentation](http://davidmikesimon.github.com/annotated.html)
+[API Documentation](http://davidmikesimon.github.com/fiendish-bundle/annotated.html)
 
 ## Installation
 
