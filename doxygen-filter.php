@@ -52,12 +52,17 @@ function process_php($source)
             list($id, $text) = $token;
             switch ($id) {
             case T_DOC_COMMENT :
-                $text = addcslashes($text, '\\');
+                $text = preg_replace('/@ORM[^\n\r]+(\n\r?)/', '\\1', $text);
+                $text = preg_replace(
+                    '/(\S+)\\\\(\S+)/',
+                    '[$1\\\\\\\\$2](@ref $1::$2)',
+                    $text
+                );
                 if (preg_match('#@var\s+[^\$]*\*/#ms', $text)) {
                     $buffer = preg_replace('#(@var\s+[^\n\r]+)(\n\r?.*\*/)#ms',
                         '$1 \$\$\$$2', $text);
                 } else {
-                    echo preg_replace('/@ORM[^\n\r]+(\n\r?)/', '\\1', $text);
+                    echo $text;
                 }
                 break;
 
@@ -87,7 +92,9 @@ function process_markdown($t)
     $t = "\mainpage\n$t";
     $t = preg_replace("/## API Doc.+?(\n#|$)/s", "\\1", $t);
     $t = str_replace("```", "~~~", $t);
+
     // TODO Link references from DavidMikeSimon\FiendishBundle\X to X
+
 
     echo($t);
 }
