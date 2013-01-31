@@ -77,6 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><b>Get downloads and source</b> at the <a href="http://github.com/DavidMikeSimon/fiendish-bundle">GitHub Project Page</a>.</p>
+<p>(This file is also available as <code>README.md</code> in the repository)</p>
 <h2>Installation</h2>
 <p>First you need to install and set up these non-PHP dependencies:</p>
 <ul>
@@ -90,6 +91,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     ...
     "davidmikesimon/fiendish-bundle": "dev-master"
 }
+</pre><p>And add both Fiendish and the RabbitMQ bundle to your <code>app/AppKernel.php</code> bundles list: </p>
+<pre class="fragment">new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+new DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle()
 </pre><p>Then you'll need to set up the <code>Process</code> table in your database. For now, that means manually installing and running the migration file found in the project's DoctrineMigrations folder.</p>
 <p>Finally, you need to add some settings to supervisor to organize the daemons for your specific app. Here's an example of a config <code>/etc/supervisor/conf.d/foobar.conf</code> for a project called Foobar: </p>
 <pre class="fragment">[program:foobar_master]
@@ -98,13 +102,19 @@ redirect_stderr=true
 
 [group:foobar]
 </pre><p>The group section is deliberately empty; Fiendish will be adding and removing processes in that group dynamically.</p>
+<p>You'll also want to add a corresponding section to your Symfony config file: </p>
+<pre class="fragment">fiendish:
+    groups:
+        foobar:
+            process_user: "www-data" 
+</pre><p><code>process_user</code> is the UNIX user that your daemons will run as.</p>
 <h2>Writing a Daemon</h2>
 <p>Daemons are implemented as classes that derive from <code>BaseDaemon</code>. Here's an example daemon for Foobar:</p>
 <div class="fragment"><div class="line"><span class="keyword">namespace </span>SomeRandomCoder\FoobarBundle\Daemon;</div>
 <div class="line"></div>
 <div class="line">use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;</div>
 <div class="line"></div>
-<div class="line"><span class="keyword">class </span>UselessDaemon <span class="keyword">extends</span> Daemon</div>
+<div class="line"><span class="keyword">class </span>UselessDaemon <span class="keyword">extends</span> BaseDaemon</div>
 <div class="line">{</div>
 <div class="line">    <span class="keyword">public</span> <span class="keyword">function</span> run($arg = null)</div>
 <div class="line">    {</div>
@@ -133,9 +143,9 @@ redirect_stderr=true
 <div class="line">);</div>
 <div class="line">$em-&gt;persist($proc);</div>
 <div class="line">$em-&gt;flush();</div>
-<div class="line">MasterDaemon::sendSyncRequest(<span class="stringliteral">&quot;foobar&quot;</span>); <span class="comment">// This call does not block</span></div>
+<div class="line">$this-&gt;<span class="keyword">get</span>(<span class="stringliteral">&quot;fiendish.groups.foobar&quot;</span>)-&gt;sendSyncRequest() <span class="comment">// This call does not block</span></div>
 </div><!-- fragment --><p>When the master daemon for the group "foobar" recieves that request, it will add processes to the Supervisor group as necessary to match the processes listed in the table.</p>
-<p>To stop a daemon process, delete the Process and send a sync request. Supervisor's state will be updated, and your daemon process will be killed and removed from the group.</p>
+<p>To stop a running daemon, delete the Process and send another sync request. Your daemon process will be killed and removed from the Supervisor group.</p>
 <h2>Debugging</h2>
 <p>Supervisor will keep track of everything printed out by your daemons and all activity related to them starting and stopping. Yur best bet for figuring out any problems with your daemons is to use the Supervisor console: </p>
 <pre class="fragment">$ sudo supervisorctl
@@ -152,7 +162,7 @@ BAR fries and a shake!
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 31 2013 14:51:10 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jan 31 2013 17:20:25 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

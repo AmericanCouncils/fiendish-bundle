@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sendsyncrequest',['sendSyncRequest',['../class_daemon_1_1_master_daemon.html#ab50600be904ef0e1c92a6b8c914e712b',1,'Daemon::MasterDaemon']]]
+  ['sendsyncrequest',['sendSyncRequest',['../class_supervisor_1_1_group.html#a66f10ce910fdfc11c44bf9924a4bbf20',1,'Supervisor::Group']]]
 ];
