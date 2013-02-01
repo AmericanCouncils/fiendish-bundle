@@ -3,7 +3,6 @@
 namespace DavidMikeSimon\FiendishBundle\Supervisor;
 
 use SupervisorClient\SupervisorClient;
-use DavidMikeSimon\FiendishBundle\Entity\Process;
 use DavidMikeSimon\FiendishBundle\Exception\RuntimeException;
 
 // TODO Maybe should refactor much of this into MasterDaemon?
@@ -45,12 +44,10 @@ class Manager
         }
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('DavidMikeSimonFiendishBundle:Process');
+        // TODO Get this through the group service instead
+        $repo = $em->getRepository('DavidMikeSimonFiendishBundle:ProcessEntity');
         $tgt_procs = [];
         foreach ($repo->findByGroupName($this->groupName) as $tp) {
-            if (!$tp->isSetup()) {
-                $tp->initialSetup($this->getContainer()->get('kernel')->getRootDir());
-            }
             // Master is not really in the same Supervisor group as subdaemons.
             // If it were, it would be possible for us to stop ourself! And
             // then nobody would be around to bring us back online.
@@ -78,7 +75,7 @@ class Manager
                     // never returns...
                     $this->logMsg($supervisor, "Stopping " . $sp["name"]);
                     $supervisor->stopProcess($sp["tgtName"], false);
-                } elseif ($this->isStoppedState($cur_status["statename"])) {
+                } elseif (self::isStoppedState($cur_status["statename"])) {
                     $this->logMsg($supervisor, "Removing " . $sp["name"]);
                     $supervisor->removeProcessFromGroup(
                         $this->getGroupName(),
@@ -133,7 +130,7 @@ class Manager
         print(date(\DateTime::W3C) . " " . $msg . "\n");
     }
 
-    private function isStoppedState($statename)
+    private static function isStoppedState($statename)
     {
         return in_array($statename, ["STOPPED", "FATAL", "EXITED", "UNKNOWN"]);
     }

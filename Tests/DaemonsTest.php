@@ -4,35 +4,16 @@ namespace DavidMikeSimon\FiendishBundle\Tests;
 
 use DavidMikeSimon\FiendishBundle\Entity\Process;
 use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
+use DavidMikeSimon\FiendishBundle\Tests\Fixtures\Daemon\SimpleDaemon;
 
 class DaemonsTest extends FiendishTestCase
 {
-    public function testDaemonControl()
+    private function assertProcessLivesAndOutputs($proc, $expectedOutput)
     {
-        $this->requiresMaster();
-
-        $em = $this->getContainer()->get('doctrine')->getEntityManager();
-        // SimpleDaemon appends "omatic" to input content, then prints it
-        $proc = new Process(
-            parent::GROUP_NAME,
-            "simple",
-            "DavidMikeSimon\FiendishBundle\Tests\Fixtures\Daemon\SimpleDaemon",
-            ["content" => "narf"]
-        );
-        $em->persist($proc);
-        $em->flush();
-
-        $grp = $this->getContainer()->get('david_mike_simon_fiendish.groups.' . parent::GROUP_NAME);
-        $grp->sendSyncRequest();
-
         $supervisor = parent::getSupervisorClient();
         $ok = false;
         for ($i = 1; $i < 50; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
-            $em->refresh($proc);
-            if (!$proc->isSetup()) {
-                continue;
-            }
 
             $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
             if (!is_null($procInfo)) {
@@ -42,26 +23,31 @@ class DaemonsTest extends FiendishTestCase
                     5000
                 )[0];
 
-                if (strpos($output, "narfomatic") !== FALSE) {
+                if (
+                    strpos($output, $expectedOutput) !== FALSE &&
+                    in_array($procInfo["statename"], [
+                        "RUNNING",
+                        "STARTING"
+                    ])
+                ) {
                     $ok = true;
                     break;
                 }
             }
         }
         $this->assertTrue($ok);
+    }
 
-        $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
-        $this->assertContains($procInfo["statename"], ["RUNNING", "STARTING"]);
-        $em->remove($proc);
-        $em->flush();
-        $grp->sendSyncRequest();
+    private function assertAllProcessesRemoved($grp)
+    {
+        $supervisor = parent::getSupervisorClient();
 
         $removed = false;
         for ($i = 1; $i < 50; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
             $removed = true;
-            foreach ($supervisor->getAllProcessInfo() as $proc) {
-                if ($proc["group"] == parent::GROUP_NAME) {
+            foreach ($supervisor->getAllProcessInfo() as $sp) {
+                if ($sp["group"] == $grp->getName()) {
                     $removed = false;
                     break;
                 }
@@ -73,5 +59,30 @@ class DaemonsTest extends FiendishTestCase
         $this->assertTrue($removed);
     }
 
+    public function testDaemonControl()
+    {
+        $this->requiresMaster();
+
+        $grp = $this->getContainer()->get(
+            'david_mike_simon_fiendish.groups.' . parent::GROUP_NAME
+        );
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $proc = $grp->newProcess(
+            "simple",
+            SimpleDaemon::toCommand($rootDir),
+            ["content" => "narf"]
+        );
+        $grp->applyChanges();
+        $this->assertProcessLivesAndOutputs($proc, "narfomatic");
+
+        $grp->removeProcess($proc);
+        $grp->applyChanges();
+        $this->assertAllProcessesRemoved($grp);
+    }
+
     // TODO Test starting multiple copies of the same daemon with the same config
+
+    // TODO Test appropriate failure messages when master daemon isn't running
+
+    // TODO Test Group::getProcess
 }

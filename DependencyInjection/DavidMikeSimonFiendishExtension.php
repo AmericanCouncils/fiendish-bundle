@@ -24,7 +24,8 @@ class DavidMikeSimonFiendishExtension extends Extension
                 '%david_mike_simon_fiendish.group.class%',
                 [
                     $groupname,
-                    new Reference('old_sound_rabbit_mq.connection.default')
+                    new Reference('old_sound_rabbit_mq.connection.default'),
+                    new Reference('doctrine')
                 ]
             );
             // TODO Get connection name from config

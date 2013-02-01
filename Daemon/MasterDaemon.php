@@ -4,28 +4,20 @@ namespace DavidMikeSimon\FiendishBundle\Daemon;
 
 use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
 
-/**
- * Daemon that manages a group of Fiendish processes in Supervisor.
- *
- * Start this daemon with Command\MasterDaemonCommand.
- */
 class MasterDaemon extends BaseDaemon
 {
     const HEARTBEAT_DELAY = 3;
 
     private $manager;
-    private $groupName;
 
-    public function run($initialState)
+    public function run($arg)
     {
-        $groupName = $initialState->group;
-
-        $this->manager = new Manager($groupName, $this->getContainer());
+        $this->manager = new Manager($this->getGroupName(), $this->getContainer());
 
         // TODO Get connection name from config
         $rabbit = $this->getContainer()->get('old_sound_rabbit_mq.connection.default');
         $ch = $rabbit->channel();
-        $queue = $ch->queue_declare($groupName . "_master")[0];
+        $queue = $ch->queue_declare($this->getGroupName() . "_master")[0];
 
         $ch->basic_consume($queue, "master",
             false, false, true, false, // 3rd true: Exclusive consumer

@@ -15,7 +15,11 @@ class InternalDaemonCommand extends Command
             ->setName('fiendish:internal-daemon')
             ->setDescription('Used internally to start sub-daemons')
             ->addArgument(
-                'daemonSpec',
+                'daemonClass',
+                InputArgument::REQUIRED
+            )
+            ->addArgument(
+                'jsonSpec',
                 InputArgument::REQUIRED
             )
             ;
@@ -24,12 +28,11 @@ class InternalDaemonCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getApplication()->getKernel()->getContainer();
-        $daemonSpec = json_decode($input->getArgument('daemonSpec'));
-        $daemonName = $daemonSpec->daemonName;
-        $daemonClass = $daemonSpec->daemonClass;
+        $daemonClass = $input->getArgument('daemonClass');
+        $spec = json_decode($input->getArgument('jsonSpec'));
 
-        print("Starting daemon '" . $daemonName . "' (" . $daemonClass . ").\n");
-        $d = new $daemonClass($daemonName, $container);
-        $d->run($daemonSpec->initialState);
+        print("Starting daemon '" . $spec->procName . "'\n");
+        $d = new $daemonClass($spec->groupName, $spec->procName, $container);
+        $d->run($spec->arg);
     }
 }

@@ -9,19 +9,16 @@ class Version20130115161320 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        $tbl = $schema->createTable("Process");
+        $tbl = $schema->createTable("ProcessEntity");
         $tbl->addColumn("id", "integer", ["unsigned" => true, "autoincrement" => true]);
-        $tbl->addColumn("initialState", "text");
-        $tbl->addColumn("daemonName", "string");
-        $tbl->addColumn("daemonClass", "string");
         $tbl->addColumn("groupName", "string");
-        $tbl->addColumn("procName", "string", ["notnull" => false]);
-        $tbl->addColumn("command", "text", ["notnull" => false]);
+        $tbl->addColumn("procName", "string");
+        $tbl->addColumn("command", "text");
         $tbl->setPrimaryKey(["id"]);
     }
 
     public function down(Schema $schema)
     {
-        $this->addSql("DROP TABLE Process");
+        $this->addSql("DROP TABLE ProcessEntity");
     }
 }

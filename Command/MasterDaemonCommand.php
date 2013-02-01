@@ -35,8 +35,11 @@ class MasterDaemonCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         print("Starting master daemon.\n");
-        $d = new MasterDaemon("master", $this->getApplication()->getKernel()->getContainer());
-        $internalState = (object)["group" => $input->getArgument('group')];
-        $d->run($internalState);
+        $d = new MasterDaemon(
+            $input->getArgument('group'),
+            "master", // FIXME Inaccurate process name
+            $this->getApplication()->getKernel()->getContainer()
+        );
+        $d->run(null);
     }
 }

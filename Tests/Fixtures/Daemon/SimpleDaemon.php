@@ -6,10 +6,10 @@ use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
 
 class SimpleDaemon extends BaseDaemon
 {
-    public function run($initialState = null)
+    public function run($arg)
     {
         while (true) {
-            print($initialState->content . "omatic\n");
+            print($arg->content . "omatic\n");
             sleep(5);
         }
     }
