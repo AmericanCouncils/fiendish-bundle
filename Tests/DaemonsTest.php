@@ -2,8 +2,6 @@
 
 namespace DavidMikeSimon\FiendishBundle\Tests;
 
-use DavidMikeSimon\FiendishBundle\Entity\Process;
-use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
 use DavidMikeSimon\FiendishBundle\Tests\Fixtures\Daemon\SimpleDaemon;
 
 class DaemonsTest extends FiendishTestCase
@@ -63,9 +61,7 @@ class DaemonsTest extends FiendishTestCase
     {
         $this->requiresMaster();
 
-        $grp = $this->getContainer()->get(
-            'david_mike_simon_fiendish.groups.' . parent::GROUP_NAME
-        );
+        $grp = $this->getGroup();
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
@@ -84,5 +80,5 @@ class DaemonsTest extends FiendishTestCase
 
     // TODO Test appropriate failure messages when master daemon isn't running
 
-    // TODO Test Group::getProcess
+    // TODO Test heartbeats
 }

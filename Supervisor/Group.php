@@ -71,6 +71,27 @@ class Group
     }
 
     /**
+     * Retrieves a Process by name.
+     *
+     * @return Process instance, or null if not found.
+     */
+    public function getProcess($procName)
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repo = $em->getRepository("DavidMikeSimonFiendishBundle:ProcessEntity");
+        $procEntity = $repo->findOneBy([
+            "groupName" => $this->getName(),
+            "procName" => $procName
+        ]);
+
+        if (is_null($procEntity)) {
+            return null;
+        } else {
+            return new Process($procEntity);
+        }
+    }
+
+    /**
      * Apply all Process changes made via newProcess() and removeProcess().
      *
      * This method does not block; the process changes
