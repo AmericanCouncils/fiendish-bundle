@@ -69,12 +69,12 @@ use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
 
 class UselessDaemon extends BaseDaemon
 {
-    public function run($arg = null)
+    public function run($arg)
     {
         while(true) {
-            print("FOO $arg!\n");
+            print("FOO " . $arg->phrase . "!\n");
             sleep(1);
-            print("BAR $arg!\n");
+            print("BAR " . $arg->phrase . "!\n");
             sleep(1);
         }
     }
@@ -88,10 +88,8 @@ The daemon has full access to your Symfony app's services. You can get
 to the container from within `run` by calling `$this->getContainer()`.
 
 You can also pass arguments to your daemons when you start them. Any
-JSON-serializable object can be used. In the example above a simple
-string is expected, but a realistic app would probably expect an array,
-which can in turn be nested arbitrarily deep with other JSON-serializable
-objects.
+JSON-serializable object can be used. In the example above an associative
+array with a single key was passed in.
 
 Be aware that PHP's json deserialization turns associative arrays
 (i.e. arrays with string keys) into objects, so that anything put to `$arg["xyz"]`
@@ -99,31 +97,37 @@ outside the daemon will need to be accessed as `$arg->xyz` within.
 
 ## Starting and Stopping Daemon Processes
 
-To start a daemon process, persist a Process object to the database and then
-ask the master daemon to sync the change:
+To start a daemon process, use the Group service as shown:
 
 ```php
-use DavidMikeSimon\FiendishBundle\Entity\Process;
-use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
+use SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon;
 
-$proc = new Process(
-    "foobar", // Group name
-    "useless_thing", // Name of this specific process
-    "SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon", // The daemon class
-    "fries and a shake" // The argument to be passed to run
+$container = $this->getContainer();
+$rootDir = $container->get('kernel')->getRootDir();
+$group = $container->get('david_mike_simon_fiendish.groups.foobar');
+$proc = $group->newProcess(
+    "useless_thing", // Name prefix, to help identify this process
+    UselessDaemon::toCommand($rootDir), // The command to execute
+    ["phrase" => "fries and a shake"] // The argument for run()
 );
-$em->persist($proc);
-$em->flush();
-$this->get("fiendish.groups.foobar")->sendSyncRequest() // This call does not block
+$procName = $proc->getProcName(); // Needed to access this Process later
+$group->applyChanges(); // This call does not block
 ```
 
-When the master daemon for the group "foobar" recieves that request,
-it will add processes to the Supervisor
-group as necessary to match the processes listed in the table.
+When applyChanges is called, the master daemon wakes up and
+adds all new processes to the Supervisor group and starts
+them up.
 
-To stop a running daemon, delete the Process and send another
-sync request. Your daemon process will be killed and removed from the
-Supervisor group.
+Stopping a running daemon is similar:
+
+```php
+$container = $this->getContainer();
+$group = $container->get('david_mike_simon_fiendish.groups.foobar');
+$proc = $group->getProcess($procName); // Hopefully you kept procName earlier...
+$group->removeProcess($proc);
+$group->applyChanges();
+
+```
 
 ## Debugging
 
