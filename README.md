@@ -123,7 +123,7 @@ Stopping a running daemon is similar:
 ```php
 $container = $this->getContainer();
 $group = $container->get('david_mike_simon_fiendish.groups.foobar');
-$proc = $group->getProcess($procName); // Hopefully you kept procName earlier...
+$proc = $group->getProcess($procName); // This is the procName you got earlier...
 $group->removeProcess($proc);
 $group->applyChanges();
 
@@ -139,13 +139,13 @@ is to use the Supervisor console:
     $ sudo supervisorctl
     > status
     foobar_master              RUNNING    pid 8263, uptime 1:35:03
-    foobar:useless_thing.37    FATAL
-    > tail -f foobar:useless_thing.37
+    foobar:useless_thing.373771873643687276    RUNNING   pid 8267, uptime 1:28:28
+    > tail -f foobar:useless_thing.373771873643687276
     FOO fries and a shake!
     BAR fries and a shake!
     FOO fries and a shake!
     BAR fries and a shake!
     ...  (All print output and PHP error output ends up here) ...
 
-(The number 37 in the process name above refers to the Process row
-with id 37.)
+(Thankfully, Supervisor's console has tab-completion, so there's no need
+to type out the long random numbers used to uniquely tag processes.)

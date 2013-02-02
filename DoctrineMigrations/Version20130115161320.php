@@ -15,6 +15,7 @@ class Version20130115161320 extends AbstractMigration
         $tbl->addColumn("procName", "string");
         $tbl->addColumn("command", "text");
         $tbl->setPrimaryKey(["id"]);
+        // TODO Unique key on group and proc names
     }
 
     public function down(Schema $schema)
