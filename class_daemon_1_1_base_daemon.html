@@ -84,6 +84,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="class_daemon_1_1_base_daemon-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -100,10 +101,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad1676399b16e43b76c7f31adfefbaaa0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#ad1676399b16e43b76c7f31adfefbaaa0">getName</a> ()</td></tr>
-<tr class="memdesc:ad1676399b16e43b76c7f31adfefbaaa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of this daemon process.  <a href="#ad1676399b16e43b76c7f31adfefbaaa0"></a><br/></td></tr>
-<tr class="memitem:aab509b4dd57b7e9a61020931a43a7752"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#aab509b4dd57b7e9a61020931a43a7752">run</a> ($initialState)</td></tr>
-<tr class="memdesc:aab509b4dd57b7e9a61020931a43a7752"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implement this abstract method with your daemon's functionality.  <a href="#aab509b4dd57b7e9a61020931a43a7752"></a><br/></td></tr>
+<tr class="memitem:a2b96865274dc0d4752749ba5be9cce08"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#a2b96865274dc0d4752749ba5be9cce08">getGroupName</a> ()</td></tr>
+<tr class="memdesc:a2b96865274dc0d4752749ba5be9cce08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of the Supervisor group this daemon process is running in.  <a href="#a2b96865274dc0d4752749ba5be9cce08"></a><br/></td></tr>
+<tr class="memitem:ab78d106fe9d2c6ae563058f3f2009473"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#ab78d106fe9d2c6ae563058f3f2009473">getProcName</a> ()</td></tr>
+<tr class="memdesc:ab78d106fe9d2c6ae563058f3f2009473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the unique name of this daemon process.  <a href="#ab78d106fe9d2c6ae563058f3f2009473"></a><br/></td></tr>
+<tr class="memitem:a57732c26e6c665fca05d3b0d4fdb3159"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#a57732c26e6c665fca05d3b0d4fdb3159">run</a> ($arg)</td></tr>
+<tr class="memdesc:a57732c26e6c665fca05d3b0d4fdb3159"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implement this abstract method with your daemon's functionality.  <a href="#a57732c26e6c665fca05d3b0d4fdb3159"></a><br/></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a45fbed60a6c8f5fbee283b8937008ac9"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_daemon_1_1_base_daemon.html#a45fbed60a6c8f5fbee283b8937008ac9">toCommand</a> ($appPath)</td></tr>
+<tr class="memdesc:a45fbed60a6c8f5fbee283b8937008ac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a shell command that can start this daemon.  <a href="#a45fbed60a6c8f5fbee283b8937008ac9"></a><br/></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -114,12 +122,12 @@ Protected Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Base class for all Fiendish daemon implementations. </p>
 </div><h2>Member Function Documentation</h2>
-<a class="anchor" id="ad1676399b16e43b76c7f31adfefbaaa0"></a>
+<a class="anchor" id="a2b96865274dc0d4752749ba5be9cce08"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">Daemon\BaseDaemon::getName </td>
+          <td class="memname">Daemon\BaseDaemon::getGroupName </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -127,12 +135,30 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the name of this daemon process. </p>
-<p>This is the same as the daemonName parameter in <a class="el" href="class_entity_1_1_process.html">Entity\Process</a>. </p>
+<p>Returns the name of the Supervisor group this daemon process is running in. </p>
+<p>This is the same as what <a class="el" href="class_supervisor_1_1_process.html#a5832227c4a16ad01dafd0b933b4fc36b">Supervisor</a>( "Supervisor\\Process::getGroupName()") returns. </p>
 
 </div>
 </div>
-<a class="anchor" id="aab509b4dd57b7e9a61020931a43a7752"></a>
+<a class="anchor" id="ab78d106fe9d2c6ae563058f3f2009473"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Daemon\BaseDaemon::getProcName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the unique name of this daemon process. </p>
+<p>This is the same as what <a class="el" href="class_supervisor_1_1_process.html#a3df67a70ee3de4450bf3dc9218163500">Supervisor</a>( "Supervisor\\Process::getProcName()") returns. </p>
+
+</div>
+</div>
+<a class="anchor" id="a57732c26e6c665fca05d3b0d4fdb3159"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -143,7 +169,7 @@ Protected Member Functions</h2></td></tr>
           <td class="memname">Daemon\BaseDaemon::run </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$initialState</em></td><td>)</td>
+          <td class="paramname"><em>$arg</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -158,10 +184,37 @@ Protected Member Functions</h2></td></tr>
 <p>This method should never return.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">$initialState</td><td>Arguments for this daemon instance from the Process. </td></tr>
+    <tr><td class="paramname">$arg</td><td>Arguments for this daemon instance from the Process. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a45fbed60a6c8f5fbee283b8937008ac9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static Daemon\BaseDaemon::toCommand </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$appPath</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a shell command that can start this daemon. </p>
+<p>This will return the correct result when called on subclasses of <a class="el" href="class_daemon_1_1_base_daemon.html" title="Base class for all Fiendish daemon implementations.">BaseDaemon</a>; it is not necessary to reimplement it. It has no purpose within <a class="el" href="class_daemon_1_1_base_daemon.html" title="Base class for all Fiendish daemon implementations.">BaseDaemon</a> itself, it's only useful for daemon classes that extend this class. </p>
 
 </div>
 </div>
@@ -171,7 +224,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Feb 1 2013 11:35:27 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 1 2013 19:44:20 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

@@ -95,22 +95,135 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a66f10ce910fdfc11c44bf9924a4bbf20"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66f10ce910fdfc11c44bf9924a4bbf20"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_supervisor_1_1_group.html#a66f10ce910fdfc11c44bf9924a4bbf20">sendSyncRequest</a> ()</td></tr>
-<tr class="memdesc:a66f10ce910fdfc11c44bf9924a4bbf20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cause a running master daemon to implement any Process changes. <br/></td></tr>
+<tr class="memitem:aee3f1d9a44c66c48e881093217e7ef07"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_supervisor_1_1_group.html#aee3f1d9a44c66c48e881093217e7ef07">newProcess</a> ($namePrefix, $command, $arg=null)</td></tr>
+<tr class="memdesc:aee3f1d9a44c66c48e881093217e7ef07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a>.  <a href="#aee3f1d9a44c66c48e881093217e7ef07"></a><br/></td></tr>
+<tr class="memitem:ac9b1fb5cb537219b5d94733107aafb58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_supervisor_1_1_group.html#ac9b1fb5cb537219b5d94733107aafb58">removeProcess</a> (<a class="el" href="class_supervisor_1_1_process.html">Process</a> $proc)</td></tr>
+<tr class="memdesc:ac9b1fb5cb537219b5d94733107aafb58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a>.  <a href="#ac9b1fb5cb537219b5d94733107aafb58"></a><br/></td></tr>
+<tr class="memitem:a789c1734d7889537ea5c68990324ee8a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_supervisor_1_1_group.html#a789c1734d7889537ea5c68990324ee8a">getProcess</a> ($procName)</td></tr>
+<tr class="memdesc:a789c1734d7889537ea5c68990324ee8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> by name.  <a href="#a789c1734d7889537ea5c68990324ee8a"></a><br/></td></tr>
+<tr class="memitem:a5baa6756317b0f606d23b2273afe141f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_supervisor_1_1_group.html#a5baa6756317b0f606d23b2273afe141f">applyChanges</a> ()</td></tr>
+<tr class="memdesc:a5baa6756317b0f606d23b2273afe141f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply all <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> changes made via <a class="el" href="class_supervisor_1_1_group.html#aee3f1d9a44c66c48e881093217e7ef07" title="Creates a new Process.">newProcess()</a> and <a class="el" href="class_supervisor_1_1_group.html#ac9b1fb5cb537219b5d94733107aafb58" title="Removes a Process.">removeProcess()</a>.  <a href="#a5baa6756317b0f606d23b2273afe141f"></a><br/></td></tr>
 <tr class="memitem:a08ac21dc8ba3033ddeaa4387a0f510e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08ac21dc8ba3033ddeaa4387a0f510e6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_supervisor_1_1_group.html#a08ac21dc8ba3033ddeaa4387a0f510e6">getName</a> ()</td></tr>
 <tr class="memdesc:a08ac21dc8ba3033ddeaa4387a0f510e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of the group. <br/></td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Dynamically controlled Supervisor process group. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+<p>Access a <a class="el" href="class_supervisor_1_1_group.html" title="Dynamically controlled Supervisor process group.">Group</a> via its service name, e.g. <code>david_mike_simon_fiendish.groups.mygroupname</code>. </p>
+</div><h2>Member Function Documentation</h2>
+<a class="anchor" id="a5baa6756317b0f606d23b2273afe141f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Supervisor\Group::applyChanges </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply all <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> changes made via <a class="el" href="class_supervisor_1_1_group.html#aee3f1d9a44c66c48e881093217e7ef07" title="Creates a new Process.">newProcess()</a> and <a class="el" href="class_supervisor_1_1_group.html#ac9b1fb5cb537219b5d94733107aafb58" title="Removes a Process.">removeProcess()</a>. </p>
+<p>This method does not block; the process changes are implemented in the background by the group's master daemon. </p>
+
+</div>
+</div>
+<a class="anchor" id="a789c1734d7889537ea5c68990324ee8a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Supervisor\Group::getProcess </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$procName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieves a <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> by name. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> instance, or null if not found. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aee3f1d9a44c66c48e881093217e7ef07"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Supervisor\Group::newProcess </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$namePrefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$command</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$arg</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a new <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a>. </p>
+<p>New processes will not actually be started until you call flush().</p>
+<p>Processes will be passed an additional argument on the command line, a JSON-encoded data structure with the following keys:</p>
+<ul>
+<li>groupName - The name of the containing Supervisor group.</li>
+<li>procName - The name of the process within Supervisor, not including the group prefix.</li>
+<li>arg - The $arg argument passed to newProcess.</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$namePrefix</td><td>A short string describing this <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a>; can be non-unique. The generated process's name will also include a unique random suffix. </td></tr>
+    <tr><td class="paramname">$command</td><td>The shell command that the <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> will run. If you are running a daemon implemented in PHP as a subclass of <a class="el" href="class_daemon_1_1_base_daemon.html">Daemon\BaseDaemon</a> then you can get an appropriate command by calling the static method getCommand() on your class. </td></tr>
+    <tr><td class="paramname">$arg</td><td>(Optional) JSON-encodable object to pass to process as an argument. Note that associative arrays are converted into objects due to passing through PHP's somewhat odd JSON decoding conventions. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The new <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> object. It's also tracked internally by the <a class="el" href="class_supervisor_1_1_group.html" title="Dynamically controlled Supervisor process group.">Group</a>, so you don't need to worry about saving this return value. However, you will want need to preserve the name if you want to get this specific <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a> out of the <a class="el" href="class_supervisor_1_1_group.html" title="Dynamically controlled Supervisor process group.">Group</a> later with <a class="el" href="class_supervisor_1_1_group.html#a789c1734d7889537ea5c68990324ee8a" title="Retrieves a Process by name.">getProcess()</a>. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac9b1fb5cb537219b5d94733107aafb58"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Supervisor\Group::removeProcess </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_supervisor_1_1_process.html">Process</a>&#160;</td>
+          <td class="paramname"><em>$proc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Removes a <a class="el" href="class_supervisor_1_1_process.html" title="A running daemon process.">Process</a>. </p>
+<p>The process will not actually be stopped until you call flush(). </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>Supervisor/Group.php</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Feb 1 2013 11:35:27 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 1 2013 19:44:20 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

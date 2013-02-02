@@ -116,53 +116,58 @@ redirect_stderr=true
 <div class="line"></div>
 <div class="line"><span class="keyword">class </span>UselessDaemon <span class="keyword">extends</span> BaseDaemon</div>
 <div class="line">{</div>
-<div class="line">    <span class="keyword">public</span> <span class="keyword">function</span> run($arg = null)</div>
+<div class="line">    <span class="keyword">public</span> <span class="keyword">function</span> run($arg)</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordflow">while</span>(<span class="keyword">true</span>) {</div>
-<div class="line">            print(<span class="stringliteral">&quot;FOO $arg!\n&quot;</span>);</div>
+<div class="line">            print(<span class="stringliteral">&quot;FOO &quot;</span> . $arg-&gt;phrase . <span class="stringliteral">&quot;!\n&quot;</span>);</div>
 <div class="line">            sleep(1);</div>
-<div class="line">            print(<span class="stringliteral">&quot;BAR $arg!\n&quot;</span>);</div>
+<div class="line">            print(<span class="stringliteral">&quot;BAR &quot;</span> . $arg-&gt;phrase . <span class="stringliteral">&quot;!\n&quot;</span>);</div>
 <div class="line">            sleep(1);</div>
 <div class="line">        }</div>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>The <code>run</code> method is called when your daemon starts. If your daemon is meant to stay up all the time, then <code>run</code> should never return.</p>
 <p>The daemon has full access to your Symfony app's services. You can get to the container from within <code>run</code> by calling <code>$this-&gt;getContainer()</code>.</p>
-<p>You can also pass arguments to your daemons when you start them. Any JSON-serializable object can be used. In the example above a simple string is expected, but a realistic app would probably expect an array, which can in turn be nested arbitrarily deep with other JSON-serializable objects.</p>
+<p>You can also pass arguments to your daemons when you start them. Any JSON-serializable object can be used. In the example above an associative array with a single key was passed in.</p>
 <p>Be aware that PHP's json deserialization turns associative arrays (i.e. arrays with string keys) into objects, so that anything put to <code>$arg["xyz"]</code> outside the daemon will need to be accessed as <code>$arg-&gt;xyz</code> within.</p>
 <h2>Starting and Stopping Daemon Processes</h2>
-<p>To start a daemon process, persist a Process object to the database and then ask the master daemon to sync the change:</p>
-<div class="fragment"><div class="line">use DavidMikeSimon\FiendishBundle\Entity\Process;</div>
-<div class="line">use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;</div>
+<p>To start a daemon process, use the Group service as shown:</p>
+<div class="fragment"><div class="line">use SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon;</div>
 <div class="line"></div>
-<div class="line">$proc = <span class="keyword">new</span> Process(</div>
-<div class="line">    <span class="stringliteral">&quot;foobar&quot;</span>, <span class="comment">// Group name</span></div>
-<div class="line">    <span class="stringliteral">&quot;useless_thing&quot;</span>, <span class="comment">// Name of this specific process</span></div>
-<div class="line">    <span class="stringliteral">&quot;SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon&quot;</span>, <span class="comment">// The daemon class</span></div>
-<div class="line">    <span class="stringliteral">&quot;fries and a shake&quot;</span> <span class="comment">// The argument to be passed to run</span></div>
+<div class="line">$container = $this-&gt;getContainer();</div>
+<div class="line">$rootDir = $container-&gt;get(<span class="stringliteral">&#39;kernel&#39;</span>)-&gt;getRootDir();</div>
+<div class="line">$group = $container-&gt;get(<span class="stringliteral">&#39;david_mike_simon_fiendish.groups.foobar&#39;</span>);</div>
+<div class="line">$proc = $group-&gt;newProcess(</div>
+<div class="line">    <span class="stringliteral">&quot;useless_thing&quot;</span>, <span class="comment">// Name prefix, to help identify this process</span></div>
+<div class="line">    UselessDaemon::toCommand($rootDir), <span class="comment">// The command to execute</span></div>
+<div class="line">    [<span class="stringliteral">&quot;phrase&quot;</span> =&gt; <span class="stringliteral">&quot;fries and a shake&quot;</span>] <span class="comment">// The argument for run()</span></div>
 <div class="line">);</div>
-<div class="line">$em-&gt;persist($proc);</div>
-<div class="line">$em-&gt;flush();</div>
-<div class="line">$this-&gt;<span class="keyword">get</span>(<span class="stringliteral">&quot;fiendish.groups.foobar&quot;</span>)-&gt;sendSyncRequest() <span class="comment">// This call does not block</span></div>
-</div><!-- fragment --><p>When the master daemon for the group "foobar" recieves that request, it will add processes to the Supervisor group as necessary to match the processes listed in the table.</p>
-<p>To stop a running daemon, delete the Process and send another sync request. Your daemon process will be killed and removed from the Supervisor group.</p>
-<h2>Debugging</h2>
+<div class="line">$procName = $proc-&gt;getProcName(); <span class="comment">// Needed to access this Process later</span></div>
+<div class="line">$group-&gt;applyChanges(); <span class="comment">// This call does not block</span></div>
+</div><!-- fragment --><p>When applyChanges is called, the master daemon wakes up and adds all new processes to the Supervisor group and starts them up.</p>
+<p>Stopping a running daemon is similar:</p>
+<div class="fragment"><div class="line">$container = $this-&gt;getContainer();</div>
+<div class="line">$group = $container-&gt;get(<span class="stringliteral">&#39;david_mike_simon_fiendish.groups.foobar&#39;</span>);</div>
+<div class="line">$proc = $group-&gt;getProcess($procName); <span class="comment">// This is the procName you got earlier...</span></div>
+<div class="line">$group-&gt;removeProcess($proc);</div>
+<div class="line">$group-&gt;applyChanges();</div>
+</div><!-- fragment --><h2>Debugging</h2>
 <p>Supervisor will keep track of everything printed out by your daemons and all activity related to them starting and stopping. Yur best bet for figuring out any problems with your daemons is to use the Supervisor console: </p>
 <pre class="fragment">$ sudo supervisorctl
 &gt; status
 foobar_master              RUNNING    pid 8263, uptime 1:35:03
-foobar:useless_thing.37    FATAL
-&gt; tail -f foobar:useless_thing.37
+foobar:useless_thing.373771873643687276    RUNNING   pid 8267, uptime 1:28:28
+&gt; tail -f foobar:useless_thing.373771873643687276
 FOO fries and a shake!
 BAR fries and a shake!
 FOO fries and a shake!
 BAR fries and a shake!
 ...  (All print output and PHP error output ends up here) ...
-</pre><p>(The number 37 in the process name above refers to the Process row with id 37.) </p>
+</pre><p>(Thankfully, Supervisor's console has tab-completion, so there's no need to type out the long random numbers used to uniquely tag processes.) </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Feb 1 2013 11:35:27 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 1 2013 19:44:20 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
