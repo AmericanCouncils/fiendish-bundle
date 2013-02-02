@@ -44,7 +44,7 @@ class Process
 
     /**
      * Returns the full name of this process as it appears in Supervisor's status list,
-     * i.e. with group prefix included.
+     * with group prefix included.
      */
     public function getFullProcName()
     {
