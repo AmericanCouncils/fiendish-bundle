@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>My Project: Class List</title>
+<title>Fiendish-Bundle: Class List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,8 +21,9 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">Fiendish-Bundle
    </div>
+   <div id="projectbrief">Background daemons for your Symfony2 app</div>
   </td>
  </tr>
  </tbody>
@@ -58,6 +59,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li class="current"><a href="annotated.html"><span>Class&#160;List</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -66,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -81,16 +83,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock">Here are the classes, structs, unions and interfaces with brief descriptions:</div><div class="directory">
-<div class="levels">[detail level <span onclick="javascript:toggleLevel(1);">1</span><span onclick="javascript:toggleLevel(2);">2</span><span onclick="javascript:toggleLevel(3);">3</span>]</div><table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><img id="arr_0_" src="ftv2mlastnode.png" alt="\" width="16" height="22" onclick="toggleFolder('0_')"/><img src="ftv2ns.png" alt="N" width="24" height="22" /><b>DavidMikeSimon</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img id="arr_0_0_" src="ftv2mlastnode.png" alt="\" width="16" height="22" onclick="toggleFolder('0_0_')"/><img src="ftv2ns.png" alt="N" width="24" height="22" /><b>FiendishBundle</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_0_" class="even"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2lastnode.png" alt="\" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="classDavidMikeSimon_1_1FiendishBundle_1_1DavidMikeSimonFiendishBundle.html" target="_self">DavidMikeSimonFiendishBundle</a></td><td class="desc"></td></tr>
+<div class="levels">[detail level <span onclick="javascript:toggleLevel(1);">1</span><span onclick="javascript:toggleLevel(2);">2</span>]</div><table class="directory">
+<tr id="row_0_" class="even"><td class="entry"><img id="arr_0_" src="ftv2mnode.png" alt="o" width="16" height="22" onclick="toggleFolder('0_')"/><img src="ftv2ns.png" alt="N" width="24" height="22" /><b>Command</b></td><td class="desc"></td></tr>
+<tr id="row_0_0_"><td class="entry"><img src="ftv2vertline.png" alt="|" width="16" height="22" /><img src="ftv2lastnode.png" alt="\" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="class_command_1_1_master_daemon_command.html" target="_self">MasterDaemonCommand</a></td><td class="desc">Command that starts the manager for your daemon processes</td></tr>
+<tr id="row_1_" class="even"><td class="entry"><img id="arr_1_" src="ftv2mnode.png" alt="o" width="16" height="22" onclick="toggleFolder('1_')"/><img src="ftv2ns.png" alt="N" width="24" height="22" /><b>Daemon</b></td><td class="desc"></td></tr>
+<tr id="row_1_0_"><td class="entry"><img src="ftv2vertline.png" alt="|" width="16" height="22" /><img src="ftv2lastnode.png" alt="\" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="class_daemon_1_1_base_daemon.html" target="_self">BaseDaemon</a></td><td class="desc">Base class for all Fiendish daemon implementations</td></tr>
+<tr id="row_2_" class="even"><td class="entry"><img id="arr_2_" src="ftv2mlastnode.png" alt="\" width="16" height="22" onclick="toggleFolder('2_')"/><img src="ftv2ns.png" alt="N" width="24" height="22" /><b>Supervisor</b></td><td class="desc"></td></tr>
+<tr id="row_2_0_"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2node.png" alt="o" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="class_supervisor_1_1_group.html" target="_self">Group</a></td><td class="desc">Dynamically controlled Supervisor process group</td></tr>
+<tr id="row_2_1_" class="even"><td class="entry"><img src="ftv2blank.png" alt="&#160;" width="16" height="22" /><img src="ftv2lastnode.png" alt="\" width="16" height="22" /><img src="ftv2cl.png" alt="C" width="24" height="22" /><a class="el" href="class_supervisor_1_1_process.html" target="_self">Process</a></td><td class="desc">A running daemon process</td></tr>
 </table>
 </div><!-- directory -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 4 2013 11:02:21 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 4 2013 12:21:54 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

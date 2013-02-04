@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>My Project: Main Page</title>
+<title>Fiendish-Bundle: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,8 +21,9 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">Fiendish-Bundle
    </div>
+   <div id="projectbrief">Background daemons for your Symfony2 app</div>
   </td>
  </tr>
  </tbody>
@@ -61,7 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -72,13 +73,101 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div class="header">
   <div class="headertitle">
-<div class="title">My Project Documentation</div>  </div>
+<div class="title">Fiendish-Bundle Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-</div><!-- contents -->
+<div class="textblock"><p><b>Get downloads and source</b> at the <a href="http://github.com/DavidMikeSimon/fiendish-bundle">GitHub Project Page</a>.</p>
+<p>(This file is also available as <code>README.md</code> in the repository)</p>
+<h2>Installation</h2>
+<p>First you need to install and set up these non-PHP dependencies:</p>
+<ul>
+<li><a href="http://www.rabbitmq.com">RabbitMQ</a></li>
+<li><a href="http://supervisord.org/">Supervisor</a></li>
+<li><a href="https://github.com/mnaberez/supervisor_twiddler">Twiddler</a></li>
+</ul>
+<p>You will also need to make sure that you have the PHP executable available from the command line. On Ubuntu, that means installing the <code>php5-cli</code> package, and on other distributions it's most likely something similar.</p>
+<p>Next, install fiendish-bundle into your Symfony2 app via composer: </p>
+<pre class="fragment">"require": {
+    ...
+    "davidmikesimon/fiendish-bundle": "dev-master"
+}
+</pre><p>And add both Fiendish and the RabbitMQ bundle to your <code>app/AppKernel.php</code> bundles list: </p>
+<pre class="fragment">new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+new DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle()
+</pre><p>Then you'll need to set up the <code>Process</code> table in your database. For now, that means manually installing and running the migration file found in the project's DoctrineMigrations folder.</p>
+<p>Finally, you need to add some settings to supervisor to organize the daemons for your specific app. Here's an example of a config <code>/etc/supervisor/conf.d/foobar.conf</code> for a project called Foobar: </p>
+<pre class="fragment">[program:foobar_master]
+command=/usr/bin/php /var/www/foobar/app/console fiendish:master-daemon foobar
+redirect_stderr=true
+
+[group:foobar]
+</pre><p>The group section is deliberately empty; Fiendish will be adding and removing processes in that group dynamically.</p>
+<p>You'll also want to add a corresponding section to your Symfony config file: </p>
+<pre class="fragment">fiendish:
+    groups:
+        foobar:
+            process_user: "www-data" 
+</pre><p><code>process_user</code> is the UNIX user that your daemons will run as.</p>
+<h2>Writing a Daemon</h2>
+<p>Daemons are implemented as classes that derive from <code>BaseDaemon</code>. Here's an example daemon for Foobar:</p>
+<div class="fragment"><div class="line"><span class="keyword">namespace </span>SomeRandomCoder\FoobarBundle\Daemon;</div>
+<div class="line"></div>
+<div class="line">use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;</div>
+<div class="line"></div>
+<div class="line"><span class="keyword">class </span>UselessDaemon <span class="keyword">extends</span> BaseDaemon</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">public</span> <span class="keyword">function</span> run($arg)</div>
+<div class="line">    {</div>
+<div class="line">        <span class="keywordflow">while</span>(<span class="keyword">true</span>) {</div>
+<div class="line">            print(<span class="stringliteral">&quot;FOO &quot;</span> . $arg-&gt;phrase . <span class="stringliteral">&quot;!\n&quot;</span>);</div>
+<div class="line">            sleep(1);</div>
+<div class="line">            print(<span class="stringliteral">&quot;BAR &quot;</span> . $arg-&gt;phrase . <span class="stringliteral">&quot;!\n&quot;</span>);</div>
+<div class="line">            sleep(1);</div>
+<div class="line">        }</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>The <code>run</code> method is called when your daemon starts. If your daemon is meant to stay up all the time, then <code>run</code> should never return.</p>
+<p>The daemon has full access to your Symfony app's services. You can get to the container from within <code>run</code> by calling <code>$this-&gt;getContainer()</code>.</p>
+<p>You can also pass arguments to your daemons when you start them. Any JSON-serializable object can be used. In the example above an associative array with a single key was passed in.</p>
+<p>Be aware that PHP's json deserialization turns associative arrays (i.e. arrays with string keys) into objects, so that anything put to <code>$arg["xyz"]</code> outside the daemon will need to be accessed as <code>$arg-&gt;xyz</code> within.</p>
+<h2>Starting and Stopping Daemon Processes</h2>
+<p>To start a daemon process, use the Group service as shown:</p>
+<div class="fragment"><div class="line">use SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon;</div>
+<div class="line"></div>
+<div class="line">$container = $this-&gt;getContainer();</div>
+<div class="line">$rootDir = $container-&gt;get(<span class="stringliteral">&#39;kernel&#39;</span>)-&gt;getRootDir();</div>
+<div class="line">$group = $container-&gt;get(<span class="stringliteral">&#39;fiendish.groups.foobar&#39;</span>);</div>
+<div class="line">$proc = $group-&gt;newProcess(</div>
+<div class="line">    <span class="stringliteral">&quot;useless_thing&quot;</span>, <span class="comment">// Name prefix, to help identify this process</span></div>
+<div class="line">    UselessDaemon::toCommand($rootDir), <span class="comment">// The command to execute</span></div>
+<div class="line">    [<span class="stringliteral">&quot;phrase&quot;</span> =&gt; <span class="stringliteral">&quot;fries and a shake&quot;</span>] <span class="comment">// The argument for run()</span></div>
+<div class="line">);</div>
+<div class="line">$procName = $proc-&gt;getProcName(); <span class="comment">// Needed to access this Process later</span></div>
+<div class="line">$group-&gt;applyChanges(); <span class="comment">// This call does not block</span></div>
+</div><!-- fragment --><p>When applyChanges is called, the master daemon wakes up and adds all new processes to the Supervisor group and starts them up.</p>
+<p>Stopping a running daemon is similar:</p>
+<div class="fragment"><div class="line">$container = $this-&gt;getContainer();</div>
+<div class="line">$group = $container-&gt;get(<span class="stringliteral">&#39;fiendish.groups.foobar&#39;</span>);</div>
+<div class="line">$proc = $group-&gt;getProcess($procName); <span class="comment">// This is the procName you got earlier...</span></div>
+<div class="line">$group-&gt;removeProcess($proc);</div>
+<div class="line">$group-&gt;applyChanges();</div>
+</div><!-- fragment --><h2>Debugging</h2>
+<p>Supervisor will keep track of everything printed out by your daemons and all activity related to them starting and stopping. Yur best bet for figuring out any problems with your daemons is to use the Supervisor console: </p>
+<pre class="fragment">$ sudo supervisorctl
+&gt; status
+foobar_master              RUNNING    pid 8263, uptime 1:35:03
+foobar:useless_thing.373771873643687276    RUNNING   pid 8267, uptime 1:28:28
+&gt; tail -f foobar:useless_thing.373771873643687276
+FOO fries and a shake!
+BAR fries and a shake!
+FOO fries and a shake!
+BAR fries and a shake!
+...  (All print output and PHP error output ends up here) ...
+</pre><p>(Thankfully, Supervisor's console has tab-completion, so there's no need to type out the long random numbers used to uniquely tag processes.) </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 4 2013 11:02:21 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 4 2013 12:21:54 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
