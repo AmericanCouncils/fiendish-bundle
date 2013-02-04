@@ -8,7 +8,7 @@ use DavidMikeSimon\FiendishBundle\Entity\ProcessEntity;
  * A running daemon process.
  *
  * Create, access and control these using the Group service, e.g.
- * `david_mike_simon_fiendish.groups.mygroupname`.
+ * `fiendish.groups.mygroupname`.
  */
 class Process
 {

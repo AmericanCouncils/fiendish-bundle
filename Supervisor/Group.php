@@ -9,7 +9,7 @@ use DavidMikeSimon\FiendishBundle\Entity\ProcessEntity;
  * Dynamically controlled Supervisor process group.
  *
  * Access a Group via its service name, e.g.
- * `david_mike_simon_fiendish.groups.mygroupname`.
+ * `fiendish.groups.mygroupname`.
  */
 class Group
 {

@@ -11,7 +11,7 @@ class Configuration implements ConfigurationInterface
     {
         $t = new TreeBuilder();
 
-        $t->root('david_mike_simon_fiendish')
+        $t->root('fiendish')
             ->children()
                 ->arrayNode('groups')
                     ->useAttributeAsKey('key')

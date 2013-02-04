@@ -33,7 +33,7 @@ old_sound_rabbit_mq:
             password: "guest"
             vhost: "/"
 
-david_mike_simon_fiendish:
+fiendish:
     groups:
         testfiendish:
             process_user: "www-data" 

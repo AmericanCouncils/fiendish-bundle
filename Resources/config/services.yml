@@ -1,7 +1,7 @@
 parameters:
-    david_mike_simon_fiendish.class: "DavidMikeSimon\FiendishBundle\DependencyInjection\DavidMikeSimonFiendishExtension"
-    david_mike_simon_fiendish.group.class: "DavidMikeSimon\FiendishBundle\Supervisor\Group"
+    fiendish.class: "DavidMikeSimon\FiendishBundle\DependencyInjection\DavidMikeSimonFiendishExtension"
+    fiendish.group.class: "DavidMikeSimon\FiendishBundle\Supervisor\Group"
 
 services:
-    david_mike_simon_fiendish:
-        class: "%david_mike_simon_fiendish.class%"
+    fiendish:
+        class: "%fiendish.class%"

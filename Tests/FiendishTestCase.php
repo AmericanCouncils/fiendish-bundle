@@ -173,7 +173,7 @@ abstract class FiendishTestCase extends WebTestCase
     protected function getGroup()
     {
         return $this->getContainer()->get(
-            'david_mike_simon_fiendish.groups.' . self::GROUP_NAME
+            'fiendish.groups.' . self::GROUP_NAME
         );
     }
 }

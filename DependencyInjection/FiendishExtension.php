@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
-class DavidMikeSimonFiendishExtension extends Extension
+class FiendishExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -21,19 +21,24 @@ class DavidMikeSimonFiendishExtension extends Extension
 
         foreach($config['groups'] as $groupname => $group) {
             $def = new Definition(
-                '%david_mike_simon_fiendish.group.class%',
+                '%fiendish.group.class%',
                 [
                     $groupname,
+                    // TODO Get connection name from config
                     new Reference('old_sound_rabbit_mq.connection.default'),
                     new Reference('doctrine')
                 ]
             );
-            // TODO Get connection name from config
             $container->setDefinition(
-                "david_mike_simon_fiendish.groups.$groupname",
+                "fiendish.groups.$groupname",
                 $def
             );
         }
+    }
+
+    public function getAlias()
+    {
+        return "fiendish";
     }
 }
 

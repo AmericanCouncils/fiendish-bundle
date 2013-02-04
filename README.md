@@ -104,7 +104,7 @@ use SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon;
 
 $container = $this->getContainer();
 $rootDir = $container->get('kernel')->getRootDir();
-$group = $container->get('david_mike_simon_fiendish.groups.foobar');
+$group = $container->get('fiendish.groups.foobar');
 $proc = $group->newProcess(
     "useless_thing", // Name prefix, to help identify this process
     UselessDaemon::toCommand($rootDir), // The command to execute
@@ -122,7 +122,7 @@ Stopping a running daemon is similar:
 
 ```php
 $container = $this->getContainer();
-$group = $container->get('david_mike_simon_fiendish.groups.foobar');
+$group = $container->get('fiendish.groups.foobar');
 $proc = $group->getProcess($procName); // This is the procName you got earlier...
 $group->removeProcess($proc);
 $group->applyChanges();
