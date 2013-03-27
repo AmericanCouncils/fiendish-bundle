@@ -23,8 +23,8 @@
         "sensio/framework-extra-bundle": "2.1.*",
         "sensio/generator-bundle": "2.1.*",
         "mondalaci/supervisor-client": "dev-master",
-        "videlalvaro/php-amqplib": "dev-master",
-        "oldsound/rabbitmq-bundle": "dev-master"
+        "oldsound/rabbitmq-bundle": "dev-master",
+        "videlalvaro/php-amqplib": "*"
     },
     "autoload": {
         "psr-0": { "DavidMikeSimon\\FiendishBundle": "" }
