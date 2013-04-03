@@ -14,7 +14,7 @@
     "require": {
         "symfony/symfony": "2.*",
         "doctrine/orm": ">=2.2.3,<2.4-dev",
-        "doctrine/doctrine-bundle": "1.0.*",
+        "doctrine/doctrine-bundle": "*",
         "doctrine/migrations": "*",
         "doctrine/doctrine-migrations-bundle": "*",
         "symfony/framework-bundle": "2.*",
