@@ -3,7 +3,7 @@
 Fiendish-bundle allows you to write daemons within Symfony2, and control their
 execution.
 
-[API Documentation](http://davidmikesimon.github.com/fiendish-bundle/annotated.html)
+[API Documentation](http://americancouncils.github.com/fiendish-bundle/annotated.html)
 
 ## Installation
 
@@ -21,7 +21,7 @@ Next, install fiendish-bundle into your Symfony2 app via composer:
     
     "require": {
         ...
-        "davidmikesimon/fiendish-bundle": "dev-master"
+        "americancouncils/fiendish-bundle": "dev-master"
     }
 
 And add both Fiendish and the RabbitMQ bundle to your `app/AppKernel.php`
