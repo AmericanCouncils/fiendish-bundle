@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Fiendish-Bundle Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><b>Get downloads and source</b> at the <a href="http://github.com/DavidMikeSimon/fiendish-bundle">GitHub Project Page</a>.</p>
+<div class="textblock"><p><b>Get downloads and source</b> at the <a href="http://github.com/AmericanCouncils/fiendish-bundle">GitHub Project Page</a>.</p>
 <p>(This file is also available as <code>README.md</code> in the repository)</p>
 <h2>Installation</h2>
 <p>First you need to install and set up these non-PHP dependencies:</p>
@@ -93,7 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 }
 </pre><p>And add both Fiendish and the RabbitMQ bundle to your <code>app/AppKernel.php</code> bundles list: </p>
 <pre class="fragment">new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
-new DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle()
+new AC\FiendishBundle\ACFiendishBundle()
 </pre><p>Then you'll need to set up the <code>Process</code> table in your database. For now, that means manually installing and running the migration file found in the project's DoctrineMigrations folder.</p>
 <p>Finally, you need to add some settings to supervisor to organize the daemons for your specific app. Here's an example of a config <code>/etc/supervisor/conf.d/foobar.conf</code> for a project called Foobar: </p>
 <pre class="fragment">[program:foobar_master]
@@ -112,7 +112,7 @@ redirect_stderr=true
 <p>Daemons are implemented as classes that derive from <code>BaseDaemon</code>. Here's an example daemon for Foobar:</p>
 <div class="fragment"><div class="line"><span class="keyword">namespace </span>SomeRandomCoder\FoobarBundle\Daemon;</div>
 <div class="line"></div>
-<div class="line">use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;</div>
+<div class="line">use AC\FiendishBundle\Daemon\BaseDaemon;</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">class </span>UselessDaemon <span class="keyword">extends</span> BaseDaemon</div>
 <div class="line">{</div>
@@ -167,7 +167,7 @@ BAR fries and a shake!
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 4 2013 12:21:54 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 24 2013 14:16:33 for Fiendish-Bundle by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
