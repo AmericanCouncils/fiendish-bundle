@@ -1,6 +1,6 @@
 parameters:
-    fiendish.class: "DavidMikeSimon\FiendishBundle\DependencyInjection\DavidMikeSimonFiendishExtension"
-    fiendish.group.class: "DavidMikeSimon\FiendishBundle\Supervisor\Group"
+    fiendish.class: "AC\FiendishBundle\DependencyInjection\ACFiendishExtension"
+    fiendish.group.class: "AC\FiendishBundle\Supervisor\Group"
 
 services:
     fiendish:

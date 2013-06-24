@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests;
+namespace AC\FiendishBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -39,7 +39,7 @@ abstract class FiendishTestCase extends WebTestCase
     {
         require_once __DIR__.'/Fixtures/app/AppKernel.php';
 
-        return 'DavidMikeSimon\FiendishBundle\Tests\Functional\AppKernel';
+        return 'AC\FiendishBundle\Tests\Functional\AppKernel';
     }
 
     protected static function createKernel(array $options = array())

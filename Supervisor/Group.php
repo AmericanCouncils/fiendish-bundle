@@ -1,9 +1,9 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Supervisor;
+namespace AC\FiendishBundle\Supervisor;
 
 use PhpAmqpLib\Message\AMQPMessage;
-use DavidMikeSimon\FiendishBundle\Entity\ProcessEntity;
+use AC\FiendishBundle\Entity\ProcessEntity;
 
 /**
  * Dynamically controlled Supervisor process group.
@@ -78,7 +78,7 @@ class Group
     public function getProcess($procName)
     {
         $em = $this->doctrine->getEntityManager();
-        $repo = $em->getRepository("DavidMikeSimonFiendishBundle:ProcessEntity");
+        $repo = $em->getRepository("ACFiendishBundle:ProcessEntity");
         $procEntity = $repo->findOneBy([
             "groupName" => $this->getName(),
             "procName" => $procName

@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Entity;
+namespace AC\FiendishBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

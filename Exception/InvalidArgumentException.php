@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Exception;
+namespace AC\FiendishBundle\Exception;
 
 class InvalidArgumentException
     extends \InvalidArgumentException

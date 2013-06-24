@@ -1,12 +1,12 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Command;
+namespace AC\FiendishBundle\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DavidMikeSimon\FiendishBundle\Daemon\MasterDaemon;
+use AC\FiendishBundle\Daemon\MasterDaemon;
 
 /**
  * Command that starts the manager for your daemon processes.

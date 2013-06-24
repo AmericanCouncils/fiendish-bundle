@@ -1,8 +1,8 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests;
+namespace AC\FiendishBundle\Tests;
 
-use DavidMikeSimon\FiendishBundle\Tests\FiendishTestCase;
+use AC\FiendishBundle\Tests\FiendishTestCase;
 
 class TestHarnessTest extends FiendishTestCase
 {

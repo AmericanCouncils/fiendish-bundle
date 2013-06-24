@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\DependencyInjection;
+namespace AC\FiendishBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

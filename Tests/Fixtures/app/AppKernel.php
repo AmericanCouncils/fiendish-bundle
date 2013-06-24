@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests\Functional;
+namespace AC\FiendishBundle\Tests\Functional;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -16,8 +16,8 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-            new \DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle(),
-            new \DavidMikeSimon\FiendishBundle\Tests\Fixtures\DavidMikeSimonFiendishTestBundle(),
+            new \AC\FiendishBundle\ACFiendishBundle(),
+            new \AC\FiendishBundle\Tests\Fixtures\ACFiendishTestBundle(),
             new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
         );
     }

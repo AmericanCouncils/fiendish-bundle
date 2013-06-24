@@ -1,8 +1,8 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Daemon;
+namespace AC\FiendishBundle\Daemon;
 
-use DavidMikeSimon\FiendishBundle\Supervisor\Manager;
+use AC\FiendishBundle\Supervisor\Manager;
 
 class MasterDaemon extends BaseDaemon
 {

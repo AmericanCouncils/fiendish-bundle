@@ -1,11 +1,11 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Daemon;
+namespace AC\FiendishBundle\Daemon;
 
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use DavidMikeSimon\FiendishBundle\Exception\RuntimeException;
+use AC\FiendishBundle\Exception\RuntimeException;
 
 /**
  * Base class for all Fiendish daemon implementations

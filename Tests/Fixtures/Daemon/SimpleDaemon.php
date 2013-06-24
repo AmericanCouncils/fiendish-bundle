@@ -1,8 +1,8 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests\Fixtures\Daemon;
+namespace AC\FiendishBundle\Tests\Fixtures\Daemon;
 
-use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
+use AC\FiendishBundle\Daemon\BaseDaemon;
 
 class SimpleDaemon extends BaseDaemon
 {

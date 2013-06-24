@@ -27,7 +27,7 @@
         "videlalvaro/php-amqplib": "*"
     },
     "autoload": {
-        "psr-0": { "DavidMikeSimon\\FiendishBundle": "" }
+        "psr-0": { "AC\\FiendishBundle": "" }
     },
-    "target-dir": "DavidMikeSimon/FiendishBundle"
+    "target-dir": "AC/FiendishBundle"
 }

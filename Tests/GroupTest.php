@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests;
+namespace AC\FiendishBundle\Tests;
 
 class GroupTest extends FiendishTestCase
 {

@@ -37,7 +37,7 @@ function process_php($source)
 {
     // TODO This will have terrible results if I want to do inline
     // code examples that include "use" or "extends" or "implements"
-    $source = str_replace("DavidMikeSimon\\FiendishBundle\\", "", $source);
+    $source = str_replace("AC\\FiendishBundle\\", "", $source);
 
     $tokens = token_get_all($source);
     $buffer = null;
@@ -91,13 +91,13 @@ function process_markdown($t)
     // Replace the original leader section with a link to GitHub
     $t = preg_replace("/^.+?##/s", "##", $t, 1);
     $t = "(This file is also available as `README.md` in the repository)\n\n$t";
-    $t = "**Get downloads and source** at the [GitHub Project Page](http://github.com/DavidMikeSimon/fiendish-bundle).\n\n$t";
+    $t = "**Get downloads and source** at the [GitHub Project Page](http://github.com/AmericanCouncils/fiendish-bundle).\n\n$t";
 
     // Convert from GitHub markdown to Doxygen markdown
     $t = "\mainpage\n$t";
     $t = str_replace("```", "~~~", $t);
 
-    // TODO Link references from DavidMikeSimon\FiendishBundle\X to X
+    // TODO Link references from AC\FiendishBundle\X to X
 
 
     echo($t);

@@ -1,12 +1,12 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle;
+namespace AC\FiendishBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use DavidMikeSimon\FiendishBundle\DependencyInjection\FiendishExtension;
+use AC\FiendishBundle\DependencyInjection\FiendishExtension;
 
-class DavidMikeSimonFiendishBundle extends Bundle
+class ACFiendishBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {

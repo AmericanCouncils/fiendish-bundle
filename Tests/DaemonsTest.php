@@ -1,8 +1,8 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Tests;
+namespace AC\FiendishBundle\Tests;
 
-use DavidMikeSimon\FiendishBundle\Tests\Fixtures\Daemon\SimpleDaemon;
+use AC\FiendishBundle\Tests\Fixtures\Daemon\SimpleDaemon;
 
 class DaemonsTest extends FiendishTestCase
 {

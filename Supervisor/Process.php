@@ -1,8 +1,8 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Supervisor;
+namespace AC\FiendishBundle\Supervisor;
 
-use DavidMikeSimon\FiendishBundle\Entity\ProcessEntity;
+use AC\FiendishBundle\Entity\ProcessEntity;
 
 /**
  * A running daemon process.

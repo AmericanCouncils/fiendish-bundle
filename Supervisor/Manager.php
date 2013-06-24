@@ -1,9 +1,9 @@
 <?php
 
-namespace DavidMikeSimon\FiendishBundle\Supervisor;
+namespace AC\FiendishBundle\Supervisor;
 
 use SupervisorClient\SupervisorClient;
-use DavidMikeSimon\FiendishBundle\Exception\RuntimeException;
+use AC\FiendishBundle\Exception\RuntimeException;
 
 // TODO Maybe should refactor much of this into MasterDaemon?
 
@@ -45,7 +45,7 @@ class Manager
 
         $em = $this->getContainer()->get('doctrine')->getManager();
         // TODO Get this through the group service instead
-        $repo = $em->getRepository('DavidMikeSimonFiendishBundle:ProcessEntity');
+        $repo = $em->getRepository('ACFiendishBundle:ProcessEntity');
         $tgt_procs = [];
         foreach ($repo->findByGroupName($this->groupName) as $tp) {
             // Master is not really in the same Supervisor group as subdaemons.
