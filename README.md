@@ -28,7 +28,7 @@ And add both Fiendish and the RabbitMQ bundle to your `app/AppKernel.php`
 bundles list:
     
     new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
-    new DavidMikeSimon\FiendishBundle\DavidMikeSimonFiendishBundle()
+    new AC\FiendishBundle\ACFiendishBundle()
 
 Then you'll need to set up the `Process` table in your database. For now,
 that means manually installing and running the migration file
@@ -65,7 +65,7 @@ Here's an example daemon for Foobar:
 ```php
 namespace SomeRandomCoder\FoobarBundle\Daemon;
 
-use DavidMikeSimon\FiendishBundle\Daemon\BaseDaemon;
+use AC\FiendishBundle\Daemon\BaseDaemon;
 
 class UselessDaemon extends BaseDaemon
 {
