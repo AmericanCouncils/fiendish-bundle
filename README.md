@@ -133,7 +133,7 @@ $group->applyChanges();
 
 Supervisor will keep track of everything printed out by your daemons
 and all activity related to them starting and stopping.
-Yur best bet for figuring out any problems with your daemons
+Your best bet for figuring out any problems with your daemons
 is to use the Supervisor console:
 
     $ sudo supervisorctl
