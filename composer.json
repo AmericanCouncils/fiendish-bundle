@@ -1,6 +1,5 @@
 {
     "name": "davidmikesimon/fiendish-bundle",
-    "version": "0.1.0",
     "description": "Background daemons for your Symfony2 app",
     "keywords": ["daemon", "supervisor"],
     "type": "symfony-bundle",
