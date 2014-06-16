@@ -79,7 +79,7 @@ class Manager
                     $tp->getProcName(), [
                     "command" => $tp->getCommand(),
                     "autostart" => "true",
-                    "user" => "www-data", // TODO Should be configured from process_user
+                    "user" => $this->group->getUsername(),
                     "exitcodes" => "",
                     "redirect_stderr" => "true"
                     ]
