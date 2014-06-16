@@ -1,0 +1,31 @@
+VAGRANTFILE_API_VERSION = "2"
+
+$provision_script = <<SCRIPT
+apt-add-repository -y ppa:rquillo/ansible
+apt-get update -y
+apt-get install -y ansible
+ansible-playbook /vagrant/dev-ansible/playbook.yml -i /vagrant/dev-ansible/hosts.cfg
+SCRIPT
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.hostname = "fiendish.vagrant.dev"
+  config.vm.define "fiendish.vagrant.dev"
+
+  config.vm.provision "shell", inline: $provision_script, keep_color: true
+
+  config.vm.network :private_network, ip: "192.168.13.78"
+
+  config.ssh.forward_agent = true
+
+  config.vm.provider "virtualbox" do |v|
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    v.memory = 1024
+  end
+
+  #forcing NFS for slightly better performance
+  config.vm.synced_folder ".", "/vagrant", nfs: true
+end
+

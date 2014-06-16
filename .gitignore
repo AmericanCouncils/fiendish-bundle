@@ -4,3 +4,5 @@ Tests/Fixtures/app/cache/
 Tests/Fixtures/app/logs/
 Tests/Fixtures/app/testdb.sqlite3
 html
+bin
+.vagrant

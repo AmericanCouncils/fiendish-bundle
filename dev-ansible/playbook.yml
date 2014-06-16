@@ -1,0 +1,16 @@
+- hosts: all
+  connection: local
+  vars:
+    production: false
+  tasks:
+    - include: common/tasks/sys.yml
+    - include: common/tasks/vagrant_helpers.yml
+    - include: common/tasks/install_php5.yml
+    - include: common/tasks/install_rabbitmq_server.yml
+    - name: set up test supervisor master process and group
+      copy: src=testfiendish.conf
+            dest=/etc/supervisor.d/testfiendish.conf
+      notify:
+        - reload supervisor
+  handlers:
+    - include: common/handlers/sys.yml

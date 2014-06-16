@@ -54,6 +54,11 @@ abstract class FiendishTestCase extends WebTestCase
 
     public function setUp()
     {
+        if (posix_getuid() != 0) {
+            print "You must run this test with sudo! Aborting.\n";
+            die();
+        }
+
         $this->killAllSupervisorProcs();
 
         if (!self::$migrated) {
