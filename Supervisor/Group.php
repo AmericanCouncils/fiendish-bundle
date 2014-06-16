@@ -53,7 +53,7 @@ class Group
             $procName,
             $command . " " . escapeshellarg($jsonSpec)
         );
-        $em = $this->doctrine->getEntityManager();
+        $em = $this->doctrine->getManager();
         $em->persist($procEntity);
 
         return new Process($procEntity);
@@ -66,7 +66,7 @@ class Group
      */
     public function removeProcess(Process $proc)
     {
-        $em = $this->doctrine->getEntityManager();
+        $em = $this->doctrine->getManager();
         $em->remove($proc->getEntity());
     }
 
@@ -77,7 +77,7 @@ class Group
      */
     public function getProcess($procName)
     {
-        $em = $this->doctrine->getEntityManager();
+        $em = $this->doctrine->getManager();
         $repo = $em->getRepository("ACFiendishBundle:ProcessEntity");
         $procEntity = $repo->findOneBy([
             "groupName" => $this->getName(),
@@ -100,7 +100,7 @@ class Group
     public function applyChanges()
     {
         // TODO Lock table during this flush
-        $em = $this->doctrine->getEntityManager();
+        $em = $this->doctrine->getManager();
         $em->flush();
 
         $ch = $this->rabbitConn->channel();
