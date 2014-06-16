@@ -13,24 +13,59 @@ class Manager
     const REMOVAL_CYCLE_DELAY_MS = 100;
 
     private $group;
+    private $lastHeartbeats = [];
 
     public function __construct($group)
     {
         $this->group = $group;
     }
 
-    public function sync()
+    private function getGroupSupervisorProcs($supervisor)
     {
-        $supervisor = $this->getSupervisorClient();
-        $this->logMsg($supervisor, "Syncing...");
         $sv_procs = [];
         foreach ($supervisor->getAllProcessInfo() as $sp) {
             if ($sp["group"] == $this->group->getName()) {
                 $sv_procs[$sp["name"]] = $sp;
             }
         }
+        return $sv_procs;
+    }
 
-        // TODO Get this through the group service instead
+    private function stopProcs($supervisor, $svProcs)
+    {
+        $removal_cycles = 0;
+        while (count($svProcs) > 0) {
+            foreach (array_keys($svProcs) as $idx) {
+                $sp = $svProcs[$idx];
+                $tgtName = $sp["group"] . ":" . $sp["name"];
+                $curStatus = $supervisor->getProcessInfo($tgtName);
+                if ($curStatus["statename"] == "RUNNING") {
+                    // The second boolean argument sets it to non-blocking,
+                    // due to an issue where blocking stopProcess sometimes
+                    // never returns...
+                    $this->logMsg($supervisor, "Stopping " . $sp["name"]);
+                    $supervisor->stopProcess($tgtName, false);
+                } elseif (self::isStoppedState($curStatus["statename"])) {
+                    $this->logMsg($supervisor, "Confirmed down " . $sp["name"]);
+                    unset($svProcs[$idx]);
+                }
+            }
+
+            ++$removal_cycles;
+            if ($removal_cycles > self::MAX_REMOVAL_CYCLES) {
+                throw new RuntimeException("Supervisor unable to stop processes");
+            }
+
+            usleep(self::REMOVAL_CYCLE_DELAY_MS * 1000);
+        }
+    }
+
+    public function sync()
+    {
+        $supervisor = $this->getSupervisorClient();
+        $this->logMsg($supervisor, "Syncing...");
+        $sv_procs = $this->getGroupSupervisorProcs($supervisor);
+
         $tgt_procs = [];
         foreach ($this->group->getAllProcesses() as $tp) {
             $tgt_procs[$tp->getProcName()] = $tp;
@@ -43,32 +78,13 @@ class Manager
                 $procs_to_remove[] = $sp;
             }
         }
-        $removal_cycles = 0;
-        while (count($procs_to_remove) > 0) {
-            foreach ($procs_to_remove as $idx=>$sp) {
-                $cur_status = $supervisor->getProcessInfo($sp["tgtName"]);
-                if ($cur_status["statename"] == "RUNNING") {
-                    // The second boolean argument sets it to non-blocking,
-                    // due to an issue where blocking stopProcess sometimes
-                    // never returns...
-                    $this->logMsg($supervisor, "Stopping " . $sp["name"]);
-                    $supervisor->stopProcess($sp["tgtName"], false);
-                } elseif (self::isStoppedState($cur_status["statename"])) {
-                    $this->logMsg($supervisor, "Removing " . $sp["name"]);
-                    $supervisor->removeProcessFromGroup(
-                        $this->group->getName(),
-                        $sp["name"]
-                    );
-                    unset($procs_to_remove[$idx]);
-                }
-            }
-
-            ++$removal_cycles;
-            if ($removal_cycles > self::MAX_REMOVAL_CYCLES) {
-                throw new RuntimeException("Supervisor unable to stop processes");
-            }
-
-            usleep(self::REMOVAL_CYCLE_DELAY_MS * 1000);
+        $this->stopProcs($supervisor, $procs_to_remove);
+        foreach ($procs_to_remove as $sp) {
+            $this->logMsg($supervisor, "Removing " . $name);
+            $supervisor->removeProcessFromGroup(
+                $this->group->getName(),
+                $sp["name"]
+            );
         }
 
         foreach ($tgt_procs as $tp) {
@@ -79,18 +95,52 @@ class Manager
                     $tp->getProcName(), [
                     "command" => $tp->getCommand(),
                     "autostart" => "true",
+                    "autorestart" => "true",
                     "user" => $this->group->getUsername(),
                     "exitcodes" => "",
                     "redirect_stderr" => "true"
                     ]
                 );
+
+                // Treat starting the process as if it were the first heartbeat.
+                // That way we can detect a timeout that occurs if the process
+                // never even sends one heartbeat message.
+                $this->gotHeartbeat($tp->getProcName());
             }
         }
     }
 
+    public function gotHeartbeat($procName)
+    {
+        $this->lastHeartbeats[$procName] = time();
+    }
+
     public function checkHeartbeats()
     {
-        // TODO
+        $timedOut = [];
+        foreach (array_keys($this->lastHeartbeats) as $procName) {
+            $secs = time() - $this->lastHeartbeats[$procName];
+            if ($secs > $this->group->getHeartbeatTimeout()) {
+                $timedOut[] = $procName;
+            }
+        }
+
+        if (empty($timedOut)) { return; }
+
+        $supervisor = $this->getSupervisorClient();
+        foreach ($timedOut as $procName) {
+            // TODO: Log with a higher priority
+            $this->logMsg($supervisor, "$procName timed out, going to restart it");
+        }
+        $sv_procs = $this->getGroupSupervisorProcs($supervisor);
+        $sv_procs = array_filter($sv_procs, function($sp) use ($timedOut) {
+            return in_array($sp["name"], $timedOut);
+        });
+        $this->stopProcs($supervisor, $sv_procs);
+        foreach ($sv_procs as $sp) {
+            $this->logMsg($supervisor, "Restarting $procName");
+            $supervisor->startProcess($sp["group"] . ":" . $sp["name"]);
+        }
     }
 
     private function getSupervisorClient()

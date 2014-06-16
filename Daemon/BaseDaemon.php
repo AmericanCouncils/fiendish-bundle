@@ -2,6 +2,7 @@
 
 namespace AC\FiendishBundle\Daemon;
 
+use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -39,6 +40,14 @@ abstract class BaseDaemon implements ContainerAwareInterface
         return $this->groupName;
     }
 
+    /**
+     * Returns the Group instance that this daemon is running in.
+     */
+    public function getGroup()
+    {
+        return $this->getContainer()->get("fiendish.groups." . $this->groupName);
+    }
+
     private $procName;
 
     /**
@@ -60,7 +69,9 @@ abstract class BaseDaemon implements ContainerAwareInterface
 
     protected function heartbeat()
     {
-        // TODO
+        $ch = $this->getGroup()->getMasterRabbit()->channel();
+        $msg = new AMQPMessage("heartbeat." . $this->procName);
+        $ch->basic_publish($msg, "", $this->groupName . "_master");
     }
 
     /**

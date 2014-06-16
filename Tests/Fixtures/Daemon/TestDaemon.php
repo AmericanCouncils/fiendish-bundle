@@ -4,7 +4,7 @@ namespace AC\FiendishBundle\Tests\Fixtures\Daemon;
 
 use AC\FiendishBundle\Daemon\BaseDaemon;
 
-class SimpleDaemon extends BaseDaemon
+class TestDaemon extends BaseDaemon
 {
     public function run($arg)
     {

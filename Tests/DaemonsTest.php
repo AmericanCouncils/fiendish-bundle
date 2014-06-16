@@ -2,7 +2,7 @@
 
 namespace AC\FiendishBundle\Tests;
 
-use AC\FiendishBundle\Tests\Fixtures\Daemon\SimpleDaemon;
+use AC\FiendishBundle\Tests\Fixtures\Daemon\TestDaemon;
 
 class DaemonsTest extends FiendishTestCase
 {
@@ -83,7 +83,7 @@ class DaemonsTest extends FiendishTestCase
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            SimpleDaemon::toCommand($rootDir),
+            TestDaemon::toCommand($rootDir),
             ["content" => "narf"]
         );
         $this->assertGroupSize($grp, 0);
@@ -94,7 +94,7 @@ class DaemonsTest extends FiendishTestCase
 
         $proc2 = $grp->newProcess(
             "simple2",
-            SimpleDaemon::toCommand($rootDir),
+            TestDaemon::toCommand($rootDir),
             ["content" => "bork"]
         );
         $this->assertGroupSize($grp, 1);
@@ -121,7 +121,7 @@ class DaemonsTest extends FiendishTestCase
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            SimpleDaemon::toCommand($rootDir),
+            TestDaemon::toCommand($rootDir),
             ["content" => "die"]
         );
         $grp->applyChanges();
@@ -143,7 +143,7 @@ class DaemonsTest extends FiendishTestCase
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            SimpleDaemon::toCommand($rootDir),
+            TestDaemon::toCommand($rootDir),
             ["content" => "narf"]
         );
         $grp->applyChanges();
@@ -160,7 +160,7 @@ class DaemonsTest extends FiendishTestCase
         $this->assertGreaterThan(0, $masterInfo2['pid']);
         $this->assertNotEquals($masterInfo['pid'], $masterInfo2['pid']);
 
-        // Assert that SimpleDaemon did not have to restart
+        // Assert that TestDaemon did not have to restart
         $pidsAfter = $this->getProcessPids($proc);
         $this->assertEquals($pidsBefore, $pidsAfter);
     }
@@ -173,7 +173,7 @@ class DaemonsTest extends FiendishTestCase
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            SimpleDaemon::toCommand($rootDir),
+            TestDaemon::toCommand($rootDir),
             ["content" => "narf"]
         );
         $grp->applyChanges();
@@ -197,5 +197,44 @@ class DaemonsTest extends FiendishTestCase
         $this->assertNotEquals($pidsBefore[0], $pidsAfter[0]);
     }
 
-    // TODO Test heartbeats
+    public function testHeartbeatAbsenceCausesAutoRestart()
+    {
+        $this->requiresMaster();
+
+        $grp = $this->getGroup();
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $proc = $grp->newProcess(
+            "simple",
+            TestDaemon::toCommand($rootDir),
+            ["content" => "vampire"] // Prevents TestDaemon heartbeats
+        );
+        $grp->applyChanges();
+
+        $pidsBefore = $this->getProcessPids($proc);
+        $this->assertEquals(1, count($pidsBefore));
+        sleep(10); // Enough time for master daemon to notice lack of heartbeats
+        $pidsAfter = $this->getProcessPids($proc);
+        $this->assertNotContains($pidsBefore[0], $pidsAfter); // Proc restarted
+    }
+
+    public function testHeartbeatPresencePreventsAutoRestart()
+    {
+        $this->requiresMaster();
+
+        $grp = $this->getGroup();
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $proc = $grp->newProcess(
+            "simple",
+            TestDaemon::toCommand($rootDir),
+            ["content" => "human"]
+        );
+        $grp->applyChanges();
+
+        $pidsBefore = $this->getProcessPids($proc);
+        $this->assertEquals(1, count($pidsBefore));
+        sleep(10);
+        $pidsAfter = $this->getProcessPids($proc);
+        $this->assertEquals(1, count($pidsAfter));
+        $this->assertEquals($pidsBefore[0], $pidsAfter[0]); // Proc not restarted
+    }
 }

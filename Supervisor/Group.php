@@ -116,8 +116,7 @@ class Group
         $em->flush();
 
         // TODO: Can we be sure that the changes are available in the DB now?
-        $ch = $this->rabbitConn->channel();
-        $queue = $ch->queue_declare($this->name . "_master")[0];
+        $ch = $this->getMasterRabbit()->channel();
         $msg = new AMQPMessage("sync");
         $ch->basic_publish($msg, "", $this->name . "_master");
     }
@@ -153,6 +152,14 @@ class Group
     public function getUsername()
     {
         return $this->username;
+    }
+
+    /**
+     * Returns a Rabbit connection for sending messages to the group master.
+     */
+    public function getMasterRabbit()
+    {
+        return $this->rabbitConn;
     }
 
     private $rabbitConn;

@@ -6,27 +6,23 @@ use AC\FiendishBundle\Supervisor\Manager;
 
 class MasterDaemon extends BaseDaemon
 {
-    private $group;
     private $manager;
 
     public function run($arg)
     {
-        $this->group = $this->getContainer()->get(
-            "fiendish.groups." . $this->getGroupName()
-        );
-        $this->manager = new Manager($this->group);
+        $this->manager = new Manager($this->getGroup());
 
-        // TODO Get connection name from config
-        $rabbit = $this->getContainer()->get('old_sound_rabbit_mq.connection.default');
+        $rabbit = $this->getGroup()->getMasterRabbit();
         $ch = $rabbit->channel();
-        $queue = $ch->queue_declare($this->getGroupName() . "_master")[0];
-
+        $queue = $ch->queue_declare($this->getGroup()->getName() . "_master")[0];
         $ch->basic_consume($queue, "master",
             false, false, true, false, // 3rd true: Exclusive consumer
             function($msg) {
                 // TODO Log both valid and invalid messages
                 if ($msg->body == 'sync') {
                     $this->manager->sync();
+                } elseif (preg_match('/^heartbeat\.(\S+)$/', $msg->body, $matches)) {
+                    $this->manager->gotHeartbeat($matches[1]);
                 }
                 $msg->delivery_info['channel']->
                     basic_ack($msg->delivery_info['delivery_tag']);
@@ -41,8 +37,8 @@ class MasterDaemon extends BaseDaemon
             $read = [$rabbit->getSocket()];
             $write = null;
             $except = null;
-            // Wait up to 3 seconds for messages
-            $changes = stream_select($read, $write, $except, 3);
+            // Wait up to 1 second for messages
+            $changes = stream_select($read, $write, $except, 1);
             if ($changes === false) {
                 throw new \Exception("stream_select failed");
             } elseif ($changes > 0) {
