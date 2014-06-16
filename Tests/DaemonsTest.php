@@ -10,7 +10,7 @@ class DaemonsTest extends FiendishTestCase
     {
         $supervisor = parent::getSupervisorClient();
         $ok = false;
-        for ($i = 1; $i < 50; ++$i) {
+        for ($i = 1; $i < 30; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
 
             $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
@@ -36,13 +36,13 @@ class DaemonsTest extends FiendishTestCase
         $this->assertTrue($ok);
     }
 
-    private function assertProcessRestarts($proc)
+    private function getProcessPids($proc)
     {
-        $supervisor = parent::getSupervisorClient();
         $pids = [];
-        $ok = false;
-        for ($i = 1; $i < 50; ++$i) {
+        for ($i = 1; $i < 30; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
+            // Get within the loop in case supervisor restarts
+            $supervisor = parent::getSupervisorClient();
             $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
             if (!is_null($procInfo)) {
                 $pid = (int)($procInfo['pid']);
@@ -50,12 +50,8 @@ class DaemonsTest extends FiendishTestCase
                     $pids[$pid] = true;
                 }
             }
-            if (count($pids) >= 2) {
-                $ok = true;
-                break;
-            }
         }
-        $this->assertTrue($ok);
+        return array_keys($pids);
     }
 
     private function assertGroupSize($grp, $size)
@@ -94,6 +90,7 @@ class DaemonsTest extends FiendishTestCase
         $grp->applyChanges();
         $this->assertGroupSize($grp, 1);
         $this->assertProcessLivesAndOutputs($proc, "narfomatic");
+        $this->assertEquals(count($this->getProcessPids($proc)), 1);
 
         $proc2 = $grp->newProcess(
             "simple2",
@@ -119,22 +116,63 @@ class DaemonsTest extends FiendishTestCase
     public function testProcessAutoRestart()
     {
         $this->requiresMaster();
+
         $grp = $this->getGroup();
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
             SimpleDaemon::toCommand($rootDir),
-            ["content" => "die"] // Causes SimpleDaemon to die after one print
+            ["content" => "die"]
         );
         $grp->applyChanges();
-        $this->assertProcessRestarts($proc);
+
+        $pidsBefore = $this->getProcessPids($proc);
+        $this->assertEquals(count($pidsBefore), 1);
+        posix_kill($pidsBefore[0], 9);
+        usleep(1000 * 100);
+        $pidsAfter = $this->getProcessPids($proc);
+        $this->assertEquals(count($pidsAfter), 1);
+        $this->assertNotEquals($pidsBefore[0], $pidsAfter[0]); // Proc restarted
     }
 
-    //public function testRecoveryOnSupervisorRestart()
-    //{
-    //}
+    public function testMasterRestart()
+    {
+        $this->requiresMaster();
 
-    public function testRecoveryOnMasterRestart()
+        $grp = $this->getGroup();
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $proc = $grp->newProcess(
+            "simple",
+            SimpleDaemon::toCommand($rootDir),
+            ["content" => "narf"]
+        );
+        $grp->applyChanges();
+        $pidsBefore = $this->getProcessPids($proc);
+        $this->assertEquals(count($pidsBefore), 1);
+
+        // Kill master
+        $supervisor = parent::getSupervisorClient();
+        $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
+        $this->assertGreaterThan(0, $masterInfo['pid']);
+        posix_kill($masterInfo['pid'], 9);
+        usleep(1000 * 100);
+        $masterInfo2 = $supervisor->getProcessInfo("testfiendish_master");
+        $this->assertEquals(0, $masterInfo2['pid']); // Master is dead
+
+        // Restart master.
+        // Normally master would be set up to autorestart, but for our test
+        // environment it must be manually restarted.
+        $supervisor->startProcess("testfiendish_master");
+        sleep(2);
+        $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
+        $this->assertGreaterThan(0, $masterInfo['pid']);
+
+        // But the SimpleDaemon did not have to restart
+        $pidsAfter = $this->getProcessPids($proc);
+        $this->assertEquals($pidsBefore, $pidsAfter);
+    }
+
+    public function testSupervisorRestart()
     {
     }
 

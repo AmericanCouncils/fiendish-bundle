@@ -55,7 +55,9 @@ abstract class FiendishTestCase extends WebTestCase
     public function setUp()
     {
         if (posix_getuid() != 0) {
-            print "You must run this test with sudo! Aborting.\n";
+            print "You must run these tests with sudo!\n";
+            print "The tests do nasty things to the supervisor daemon, so you";
+            print "should run the tests in a scratch VM like Vagrant too.";
             die();
         }
 
