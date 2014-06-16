@@ -36,25 +36,25 @@ class DaemonsTest extends FiendishTestCase
         $this->assertTrue($ok);
     }
 
-    private function assertAllProcessesRemoved($grp)
+    private function assertGroupSize($grp, $size)
     {
         $supervisor = parent::getSupervisorClient();
 
-        $removed = false;
+        $ok = false;
         for ($i = 1; $i < 50; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
-            $removed = true;
+            $count = 0;
             foreach ($supervisor->getAllProcessInfo() as $sp) {
                 if ($sp["group"] == $grp->getName()) {
-                    $removed = false;
-                    break;
+                    ++$count;
                 }
             }
-            if ($removed) {
+            if ($count === $size) {
+                $ok = true;
                 break;
             }
         }
-        $this->assertTrue($removed);
+        $this->assertTrue($ok);
     }
 
     public function testDaemonControl()
@@ -68,15 +68,27 @@ class DaemonsTest extends FiendishTestCase
             SimpleDaemon::toCommand($rootDir),
             ["content" => "narf"]
         );
+        $this->assertGroupSize($grp, 0);
         $grp->applyChanges();
+        $this->assertGroupSize($grp, 1);
         $this->assertProcessLivesAndOutputs($proc, "narfomatic");
 
-        $grp->removeProcess($proc);
+        $proc2 = $grp->newProcess(
+            "simple2",
+            SimpleDaemon::toCommand($rootDir),
+            ["content" => "bork"]
+        );
+        $this->assertGroupSize($grp, 1);
         $grp->applyChanges();
-        $this->assertAllProcessesRemoved($grp);
-    }
+        $this->assertGroupSize($grp, 2);
+        $this->assertProcessLivesAndOutputs($proc2, "borkomatic");
 
-    // TODO Test starting multiple copies of the same daemon with the same config
+        $grp->removeProcess($proc);
+        $grp->removeProcess($proc2);
+        $this->assertGroupSize($grp, 2);
+        $grp->applyChanges();
+        $this->assertGroupSize($grp, 0);
+    }
 
     // TODO Test appropriate failure messages when master daemon isn't running
 

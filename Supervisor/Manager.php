@@ -35,7 +35,6 @@ class Manager
         // TODO Check if we are the correct master process, die if not
 
         $supervisor = $this->getSupervisorClient();
-        $this->logMsg($supervisor, "Syncing...");
         $sv_procs = [];
         foreach ($supervisor->getAllProcessInfo() as $sp) {
             if ($sp["group"] == $this->getGroupName()) {
@@ -110,7 +109,6 @@ class Manager
 
         // TODO Use multicall.
         $em->flush();
-        $this->logMsg($supervisor, "Sync finished");
     }
 
     public function checkHeartbeats()
@@ -126,6 +124,7 @@ class Manager
 
     private function logMsg($supervisor, $msg)
     {
+        // TODO Should do this with monolog instead
         $supervisor->logMessage("(Fiendish) " . $this->groupName . " Master: $msg");
         print(date(\DateTime::W3C) . " " . $msg . "\n");
     }
