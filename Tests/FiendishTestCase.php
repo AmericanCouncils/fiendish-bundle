@@ -171,10 +171,7 @@ abstract class FiendishTestCase extends WebTestCase
 
     protected static function getSupervisorClient()
     {
-        if (is_null(self::$supervisorClient)) {
-            self::$supervisorClient =  new SupervisorClient("unix:///var/run/supervisor.sock", 0, 10);
-        }
-        return self::$supervisorClient;
+        return new SupervisorClient("unix:///var/run/supervisor.sock", 0, 10);
     }
 
     protected function getGroup()

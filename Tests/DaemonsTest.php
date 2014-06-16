@@ -159,7 +159,7 @@ class DaemonsTest extends FiendishTestCase
         $masterInfo2 = $supervisor->getProcessInfo("testfiendish_master");
         $this->assertEquals(0, $masterInfo2['pid']); // Master is dead
 
-        // Restart master.
+        // Start master up again.
         // Normally master would be set up to autorestart, but for our test
         // environment it must be manually restarted.
         $supervisor->startProcess("testfiendish_master");
@@ -167,16 +167,40 @@ class DaemonsTest extends FiendishTestCase
         $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
         $this->assertGreaterThan(0, $masterInfo['pid']);
 
-        // But the SimpleDaemon did not have to restart
+        // Assert that SimpleDaemon did not have to restart
         $pidsAfter = $this->getProcessPids($proc);
         $this->assertEquals($pidsBefore, $pidsAfter);
     }
 
     public function testSupervisorRestart()
     {
-    }
+        $this->requiresMaster();
 
-    // TODO Test appropriate failure messages when master daemon isn't running
+        $grp = $this->getGroup();
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $proc = $grp->newProcess(
+            "simple",
+            SimpleDaemon::toCommand($rootDir),
+            ["content" => "narf"]
+        );
+        $grp->applyChanges();
+        $pidsBefore = $this->getProcessPids($proc);
+        $this->assertEquals(1, count($pidsBefore));
+        system("/etc/init.d/supervisor restart");
+        sleep(5);
+
+        // Restart master daemon
+        $supervisor = parent::getSupervisorClient();
+        $supervisor->startProcess("testfiendish_master");
+        sleep(5);
+        $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
+        $this->assertGreaterThan(0, $masterInfo['pid']);
+
+        // Assert that daemon was restarted as well
+        $pidsAfter = $this->getProcessPids($proc);
+        $this->assertEquals(1, count($pidsAfter));
+        $this->assertNotEquals($pidsBefore[0], $pidsAfter[0]);
+    }
 
     // TODO Test heartbeats
 }
