@@ -18,7 +18,7 @@
         "doctrine/doctrine-migrations-bundle": "*",
         "symfony/framework-bundle": "2.*",
         "symfony/console": "2.*",
-        "mondalaci/supervisor-client": "*",
+        "mondalaci/supervisor-client": "dev-master",
         "oldsound/rabbitmq-bundle": "1.*"
     },
     "autoload": {
