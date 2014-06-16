@@ -6,13 +6,15 @@ use AC\FiendishBundle\Supervisor\Manager;
 
 class MasterDaemon extends BaseDaemon
 {
-    const HEARTBEAT_DELAY = 3;
-
+    private $group;
     private $manager;
 
     public function run($arg)
     {
-        $this->manager = new Manager($this->getGroupName(), $this->getContainer());
+        $this->group = $this->getContainer()->get(
+            "fiendish.groups." . $this->getGroupName()
+        );
+        $this->manager = new Manager($this->group);
 
         // TODO Get connection name from config
         $rabbit = $this->getContainer()->get('old_sound_rabbit_mq.connection.default');
@@ -34,15 +36,15 @@ class MasterDaemon extends BaseDaemon
         $this->manager->sync();
 
         while (true) {
-            $this->heartbeat();
             $this->manager->checkHeartbeats();
 
-            $read = array($rabbit->getSocket());
+            $read = [$rabbit->getSocket()];
             $write = null;
             $except = null;
-            $changes = stream_select($read, $write, $except, self::HEARTBEAT_DELAY);
+            // Wait up to 3 seconds for messages
+            $changes = stream_select($read, $write, $except, 3);
             if ($changes === false) {
-                throw new \Exception("Stream_select failed");
+                throw new \Exception("stream_select failed");
             } elseif ($changes > 0) {
                 // TODO If a bunch of syncs queue up, should only run once.
                 $ch->wait();

@@ -92,6 +92,19 @@ class Group
     }
 
     /**
+     * Returns a list of all Processes in the group.
+     *
+     * @return Array of Process instances
+     */
+    public function getAllProcesses()
+    {
+        $em = $this->doctrine->getManager();
+        $repo = $em->getRepository("ACFiendishBundle:ProcessEntity");
+        $entities = $repo->findByGroupName($this->getName());
+        return array_map(function ($e) { return new Process($e); }, $entities);
+    }
+
+    /**
      * Apply all Process changes made via newProcess() and removeProcess().
      *
      * This method does not block; the process changes
@@ -99,10 +112,10 @@ class Group
      */
     public function applyChanges()
     {
-        // TODO Lock table during this flush
         $em = $this->doctrine->getManager();
         $em->flush();
 
+        // TODO: Can we be sure that the changes are available in the DB now?
         $ch = $this->rabbitConn->channel();
         $queue = $ch->queue_declare($this->name . "_master")[0];
         $msg = new AMQPMessage("sync");
@@ -119,13 +132,38 @@ class Group
         return $this->name;
     }
 
+    private $heartbeatTimeout;
+
+    /**
+     * Returns the maximum number of seconds allowed between heartbeats.
+     *
+     * If a process in this group doesn't send a heartbeat within this time,
+     * it will be forcibly restarted.
+     */
+    public function getHeartbeatTimeout()
+    {
+        return $this->heartbeatTimeout;
+    }
+
+    private $username;
+
+    /**
+     * Returns the user that processes in this group run as.
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
     private $rabbitConn;
     private $doctrine;
 
-    public function __construct($name, $rabbitConn, $doctrine)
+    public function __construct($name, $rabbitConn, $doctrine, $username, $heartbeatTimeout)
     {
         $this->name = $name;
         $this->rabbitConn = $rabbitConn;
         $this->doctrine = $doctrine;
+        $this->username = $username;
+        $this->heartbeatTimeout = $heartbeatTimeout;
     }
 }

@@ -24,9 +24,10 @@ class FiendishExtension extends Extension
                 '%fiendish.group.class%',
                 [
                     $groupname,
-                    // TODO Get connection name from config
-                    new Reference('old_sound_rabbit_mq.connection.default'),
-                    new Reference('doctrine')
+                    new Reference("old_sound_rabbit_mq.connection." . $group['rabbit_conn']),
+                    new Reference('doctrine'),
+                    $group['process_user'],
+                    $group['heartbeat_timeout']
                 ]
             );
             $container->setDefinition(

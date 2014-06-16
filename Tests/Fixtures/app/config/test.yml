@@ -37,3 +37,4 @@ fiendish:
     groups:
         testfiendish:
             process_user: "www-data" 
+            heartbeat_timeout: 5

@@ -179,15 +179,15 @@ class DaemonsTest extends FiendishTestCase
         $grp->applyChanges();
         $pidsBefore = $this->getProcessPids($proc);
         $this->assertEquals(1, count($pidsBefore));
-        system("/etc/init.d/supervisor restart");
-        sleep(5);
+        `/etc/init.d/supervisor restart`;
+        sleep(3);
 
         // Restart master daemon.
         // Normally it would start by itself, but we have disabled autostart
         // in the test environment's supervisor config.
         $supervisor = parent::getSupervisorClient();
         $supervisor->startProcess("testfiendish_master");
-        sleep(5);
+        sleep(3);
         $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
         $this->assertGreaterThan(0, $masterInfo['pid']);
 

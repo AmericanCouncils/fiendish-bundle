@@ -18,7 +18,7 @@ the `php5-cli` package, and on other distributions it's most
 likely something similar.
 
 Next, install fiendish-bundle into your Symfony2 app via composer:
-    
+
     "require": {
         ...
         "americancouncils/fiendish-bundle": "dev-master"
@@ -26,7 +26,7 @@ Next, install fiendish-bundle into your Symfony2 app via composer:
 
 And add both Fiendish and the RabbitMQ bundle to your `app/AppKernel.php`
 bundles list:
-    
+
     new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
     new AC\FiendishBundle\ACFiendishBundle()
 
@@ -53,7 +53,7 @@ config file:
     fiendish:
         groups:
             foobar:
-                process_user: "www-data" 
+                process_user: "www-data"
 
 `process_user` is the UNIX user that your daemons will run as.
 
@@ -72,9 +72,11 @@ class UselessDaemon extends BaseDaemon
     public function run($arg)
     {
         while(true) {
-            print("FOO " . $arg->phrase . "!\n");
+            $this->heartbeat();
+
+            print("FOO " . $arg['phrase'] . "!\n");
             sleep(1);
-            print("BAR " . $arg->phrase . "!\n");
+            print("BAR " . $arg['phrase'] . "!\n");
             sleep(1);
         }
     }
@@ -82,18 +84,17 @@ class UselessDaemon extends BaseDaemon
 ```
 
 The `run` method is called when your daemon starts. If your daemon is
-meant to stay up all the time, then `run` should never return.
+meant to stay up all the time, then `run` should never return. It also needs
+to call the `heartbeat` method regularly, every few seconds or so. If a long
+enough time passes between heartbeats (by default, 30 seconds), your daemon
+will be assumed frozen and forcibly restarted.
 
 The daemon has full access to your Symfony app's services. You can get
-to the container from within `run` by calling `$this->getContainer()`.
+to the container by calling `$this->getContainer()`.
 
 You can also pass arguments to your daemons when you start them. Any
 JSON-serializable object can be used. In the example above an associative
 array with a single key was passed in.
-
-Be aware that PHP's json deserialization turns associative arrays
-(i.e. arrays with string keys) into objects, so that anything put to `$arg["xyz"]`
-outside the daemon will need to be accessed as `$arg->xyz` within.
 
 ## Starting and Stopping Daemon Processes
 

@@ -1,7 +1,3 @@
 parameters:
-    fiendish.class: "AC\FiendishBundle\DependencyInjection\ACFiendishExtension"
+    fiendish.class: "AC\FiendishBundle\DependencyInjection\FiendishExtension"
     fiendish.group.class: "AC\FiendishBundle\Supervisor\Group"
-
-services:
-    fiendish:
-        class: "%fiendish.class%"

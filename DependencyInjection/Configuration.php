@@ -17,6 +17,8 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('key')
                     ->prototype('array')
                         ->children()
+                            ->scalarNode('heartbeat_timeout')->defaultValue(30)->end()
+                            ->scalarNode('rabbit_conn')->defaultValue('default')->end()
                             ->scalarNode('process_user')
                         ->end()
                     ->end()

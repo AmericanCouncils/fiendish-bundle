@@ -12,49 +12,34 @@ class Manager
     const MAX_REMOVAL_CYCLES = 200;
     const REMOVAL_CYCLE_DELAY_MS = 100;
 
-    private $container;
-    public function getContainer()
-    {
-        return $this->container;
-    }
+    private $group;
 
-    private $groupName;
-    public function getGroupName()
+    public function __construct($group)
     {
-        return $this->groupName;
-    }
-
-    public function __construct($groupName, $container)
-    {
-        $this->groupName = $groupName;
-        $this->container = $container;
+        $this->group = $group;
     }
 
     public function sync()
     {
-        // TODO Check if we are the correct master process, die if not
-
         $supervisor = $this->getSupervisorClient();
         $this->logMsg($supervisor, "Syncing...");
         $sv_procs = [];
         foreach ($supervisor->getAllProcessInfo() as $sp) {
-            if ($sp["group"] == $this->getGroupName()) {
+            if ($sp["group"] == $this->group->getName()) {
                 $sv_procs[$sp["name"]] = $sp;
             }
         }
 
         // TODO Get this through the group service instead
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('ACFiendishBundle:ProcessEntity');
         $tgt_procs = [];
-        foreach ($repo->findByGroupName($this->groupName) as $tp) {
+        foreach ($this->group->getAllProcesses() as $tp) {
             $tgt_procs[$tp->getProcName()] = $tp;
         }
 
         $procs_to_remove = [];
         foreach ($sv_procs as $sp) {
             if (!array_key_exists($sp["name"], $tgt_procs)) {
-                $sp["tgtName"] = $this->getGroupName() . ":" . $sp["name"];
+                $sp["tgtName"] = $this->group->getName() . ":" . $sp["name"];
                 $procs_to_remove[] = $sp;
             }
         }
@@ -71,7 +56,7 @@ class Manager
                 } elseif (self::isStoppedState($cur_status["statename"])) {
                     $this->logMsg($supervisor, "Removing " . $sp["name"]);
                     $supervisor->removeProcessFromGroup(
-                        $this->getGroupName(),
+                        $this->group->getName(),
                         $sp["name"]
                     );
                     unset($procs_to_remove[$idx]);
@@ -90,20 +75,17 @@ class Manager
             if (!array_key_exists($tp->getProcName(), $sv_procs)) {
                 $this->logMsg($supervisor, "Adding " . $tp->getProcName());
                 $supervisor->addProgramToGroup(
-                    $this->getGroupName(),
+                    $this->group->getName(),
                     $tp->getProcName(), [
                     "command" => $tp->getCommand(),
                     "autostart" => "true",
-                    "user" => "www-data", // TODO Should be configurable
+                    "user" => "www-data", // TODO Should be configured from process_user
                     "exitcodes" => "",
                     "redirect_stderr" => "true"
                     ]
                 );
             }
         }
-
-        // TODO Use multicall.
-        $em->flush();
     }
 
     public function checkHeartbeats()
@@ -120,7 +102,7 @@ class Manager
     private function logMsg($supervisor, $msg)
     {
         // TODO Should do this with monolog instead
-        $supervisor->logMessage("(Fiendish) " . $this->groupName . " Master: $msg");
+        $supervisor->logMessage("(Fiendish) " . $this->group->getName() . " Master: $msg");
         print(date(\DateTime::W3C) . " " . $msg . "\n");
     }
 

@@ -29,10 +29,10 @@ class InternalDaemonCommand extends Command
     {
         $container = $this->getApplication()->getKernel()->getContainer();
         $daemonClass = $input->getArgument('daemonClass');
-        $spec = json_decode($input->getArgument('jsonSpec'));
+        $spec = json_decode($input->getArgument('jsonSpec'), true);
 
-        print("Starting daemon '" . $spec->procName . "'\n");
-        $d = new $daemonClass($spec->groupName, $spec->procName, $container);
-        $d->run($spec->arg);
+        print("Starting daemon '" . $spec['procName'] . "'\n");
+        $d = new $daemonClass($spec['groupName'], $spec['procName'], $container);
+        $d->run($spec['arg']);
     }
 }
