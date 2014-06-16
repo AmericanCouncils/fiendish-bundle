@@ -42,20 +42,13 @@ class Manager
             }
         }
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         // TODO Get this through the group service instead
+        $em = $this->getContainer()->get('doctrine')->getManager();
         $repo = $em->getRepository('ACFiendishBundle:ProcessEntity');
         $tgt_procs = [];
         foreach ($repo->findByGroupName($this->groupName) as $tp) {
-            // Master is not really in the same Supervisor group as subdaemons.
-            // If it were, it would be possible for us to stop ourself! And
-            // then nobody would be around to bring us back online.
-            // TODO Master proc name should include the group name, e.g. foo_master
-            if ($tp->getProcName() != "master") {
-                $tgt_procs[$tp->getProcName()] = $tp;
-            }
+            $tgt_procs[$tp->getProcName()] = $tp;
         }
-        // TODO Create the master daemon process row if it doesn't already exist
 
         $procs_to_remove = [];
         foreach ($sv_procs as $sp) {
