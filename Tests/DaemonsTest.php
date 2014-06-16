@@ -36,6 +36,28 @@ class DaemonsTest extends FiendishTestCase
         $this->assertTrue($ok);
     }
 
+    private function assertProcessRestarts($proc)
+    {
+        $supervisor = parent::getSupervisorClient();
+        $pids = [];
+        $ok = false;
+        for ($i = 1; $i < 50; ++$i) {
+            usleep(1000 * 100); // 100 milliseconds
+            $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
+            if (!is_null($procInfo)) {
+                $pid = (int)($procInfo['pid']);
+                if ($pid > 0) {
+                    $pids[$pid] = true;
+                }
+            }
+            if (count($pids) >= 2) {
+                $ok = true;
+                break;
+            }
+        }
+        $this->assertTrue($ok);
+    }
+
     private function assertGroupSize($grp, $size)
     {
         $supervisor = parent::getSupervisorClient();
@@ -84,10 +106,36 @@ class DaemonsTest extends FiendishTestCase
         $this->assertProcessLivesAndOutputs($proc2, "borkomatic");
 
         $grp->removeProcess($proc);
-        $grp->removeProcess($proc2);
         $this->assertGroupSize($grp, 2);
         $grp->applyChanges();
+        $this->assertGroupSize($grp, 1);
+
+        $grp->removeProcess($proc2);
+        $this->assertGroupSize($grp, 1);
+        $grp->applyChanges();
         $this->assertGroupSize($grp, 0);
+    }
+
+    public function testProcessAutoRestart()
+    {
+        $this->requiresMaster();
+        $grp = $this->getGroup();
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+        $proc = $grp->newProcess(
+            "simple",
+            SimpleDaemon::toCommand($rootDir),
+            ["content" => "die"] // Causes SimpleDaemon to die after one print
+        );
+        $grp->applyChanges();
+        $this->assertProcessRestarts($proc);
+    }
+
+    //public function testRecoveryOnSupervisorRestart()
+    //{
+    //}
+
+    public function testRecoveryOnMasterRestart()
+    {
     }
 
     // TODO Test appropriate failure messages when master daemon isn't running

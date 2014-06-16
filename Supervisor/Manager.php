@@ -101,6 +101,7 @@ class Manager
                     "command" => $tp->getCommand(),
                     "autostart" => "true",
                     "user" => "www-data", // TODO Should be configurable
+                    "exitcodes" => "",
                     "redirect_stderr" => "true"
                     ]
                 );

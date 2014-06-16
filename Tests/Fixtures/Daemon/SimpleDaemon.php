@@ -10,7 +10,10 @@ class SimpleDaemon extends BaseDaemon
     {
         while (true) {
             print($arg->content . "omatic\n");
-            sleep(5);
+            sleep(2);
+            if ($arg->content == "die") {
+                die();
+            }
         }
     }
 }
