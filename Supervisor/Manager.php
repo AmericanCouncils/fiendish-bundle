@@ -35,6 +35,7 @@ class Manager
         // TODO Check if we are the correct master process, die if not
 
         $supervisor = $this->getSupervisorClient();
+        $this->logMsg($supervisor, "Syncing...");
         $sv_procs = [];
         foreach ($supervisor->getAllProcessInfo() as $sp) {
             if ($sp["group"] == $this->getGroupName()) {

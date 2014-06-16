@@ -150,22 +150,15 @@ class DaemonsTest extends FiendishTestCase
         $pidsBefore = $this->getProcessPids($proc);
         $this->assertEquals(count($pidsBefore), 1);
 
-        // Kill master
+        // Kill master and wait for it to come back
         $supervisor = parent::getSupervisorClient();
         $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
         $this->assertGreaterThan(0, $masterInfo['pid']);
         posix_kill($masterInfo['pid'], 9);
-        usleep(1000 * 100);
-        $masterInfo2 = $supervisor->getProcessInfo("testfiendish_master");
-        $this->assertEquals(0, $masterInfo2['pid']); // Master is dead
-
-        // Start master up again.
-        // Normally master would be set up to autorestart, but for our test
-        // environment it must be manually restarted.
-        $supervisor->startProcess("testfiendish_master");
         sleep(2);
-        $masterInfo = $supervisor->getProcessInfo("testfiendish_master");
-        $this->assertGreaterThan(0, $masterInfo['pid']);
+        $masterInfo2 = $supervisor->getProcessInfo("testfiendish_master");
+        $this->assertGreaterThan(0, $masterInfo2['pid']);
+        $this->assertNotEquals($masterInfo['pid'], $masterInfo2['pid']);
 
         // Assert that SimpleDaemon did not have to restart
         $pidsAfter = $this->getProcessPids($proc);
@@ -189,7 +182,9 @@ class DaemonsTest extends FiendishTestCase
         system("/etc/init.d/supervisor restart");
         sleep(5);
 
-        // Restart master daemon
+        // Restart master daemon.
+        // Normally it would start by itself, but we have disabled autostart
+        // in the test environment's supervisor config.
         $supervisor = parent::getSupervisorClient();
         $supervisor->startProcess("testfiendish_master");
         sleep(5);

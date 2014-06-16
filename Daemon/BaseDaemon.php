@@ -58,15 +58,6 @@ abstract class BaseDaemon implements ContainerAwareInterface
         $this->setContainer($container);
     }
 
-    /**
-     * Implement this abstract method with your daemon's functionality.
-     *
-     * This method should never return.
-     *
-     * @param $arg Arguments for this daemon instance from the Process.
-     */
-    abstract public function run($arg);
-
     protected function heartbeat()
     {
         // TODO
@@ -94,4 +85,11 @@ abstract class BaseDaemon implements ContainerAwareInterface
             escapeshellarg(get_called_class())
         ]);
     }
+
+    /**
+     * Implement this abstract method with your daemon's functionality.
+     *
+     * @param $arg Arguments for this daemon instance from the Process.
+     */
+    abstract public function run($arg);
 }

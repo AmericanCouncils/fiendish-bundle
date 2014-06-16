@@ -48,7 +48,6 @@ class MasterDaemon extends BaseDaemon
                 $ch->wait();
             }
 
-
             // TODO If we've been up a while, restart ourselves to avoid
             // any possible PHP weirdness/leaks.
         }
