@@ -60,6 +60,16 @@ abstract class BaseDaemon implements ContainerAwareInterface
         return $this->procName;
     }
 
+    /**
+     * Returns the unique name of this daemon process with group.
+     *
+     * This is the same as what Supervisor\Process::getFullProcName() returns.
+     */
+    public function getFullProcName()
+    {
+        return $this->getGroupName() . ":" . $this->getProcName();
+    }
+
     public function __construct($groupName, $procName, $container)
     {
         $this->groupName = $groupName;
@@ -70,17 +80,12 @@ abstract class BaseDaemon implements ContainerAwareInterface
     protected function heartbeat()
     {
         $ch = $this->getGroup()->getMasterRabbit()->channel();
-        $msg = new AMQPMessage("heartbeat." . $this->procName);
+        $msg = new AMQPMessage("heartbeat." . $this->getFullProcName());
         $ch->basic_publish($msg, "", $this->groupName . "_master");
     }
 
     /**
      * Returns a shell command that can start this daemon.
-     *
-     * This will return the correct result when called on subclasses of
-     * BaseDaemon; it is not necessary to reimplement it. It has no
-     * purpose within BaseDaemon itself, it's only useful for daemon
-     * classes that extend this class.
      */
     public static function toCommand($appPath)
     {
@@ -100,7 +105,7 @@ abstract class BaseDaemon implements ContainerAwareInterface
     /**
      * Implement this abstract method with your daemon's functionality.
      *
-     * @param $arg Arguments for this daemon instance from the Process.
+     * @param $arg Arguments for this daemon, from the Process constructor.
      */
     abstract public function run($arg);
 }

@@ -2,16 +2,100 @@
 
 namespace AC\FiendishBundle\Daemon;
 
-use AC\FiendishBundle\Supervisor\Manager;
+use Functional as F;
+use AC\FiendishBundle\Supervisor\Client;
 
 class MasterDaemon extends BaseDaemon
 {
-    private $manager;
+    private $lastHeartbeats = [];
+
+    private function logMsg($msg)
+    {
+        // TODO Should do this with monolog instead
+        print(date(\DateTime::W3C) . " " . $msg . "\n");
+    }
+
+    private function getSupervisorProgramConfig($proc)
+    {
+        return [
+            "command" => $proc->getCommand(),
+            "autostart" => "true",
+            "autorestart" => "true",
+            "user" => $this->getGroup()->getUsername(),
+            "exitcodes" => "",
+            "redirect_stderr" => "true"
+        ];
+    }
+
+    private function sync()
+    {
+        $supervisor = $this->getSupervisorClient();
+        $groupName = $this->getGroup()->getName();
+        $this->logMsg("Syncing...");
+
+        $sProcs = $supervisor->getGroupProcessInfo($groupName);
+        $sProcNames = F\pluck($sProcs, "fullName");
+        $tProcs = $this->getGroup()->getAllProcesses();
+        $tProcNames = F\map($tProcs, function ($tp) { return $tp->getFullProcName(); });
+
+        // Remove processes that are in supervisor but not in the target list
+        $toRemove = F\reject($sProcs, function ($sp) use ($tProcNames) {
+            return in_array($sp["fullName"], $tProcNames);
+        });
+        $supervisor->stopProcessesParallel(F\pluck($toRemove, "fullName"));
+        $supervisor->removeProcessesFromGroup($groupName, F\pluck($toRemove, "name"));
+
+        // Add processes that are in the target list but not in supervisor
+        $toAdd = F\reject($tProcs, function ($tp) use ($sProcNames) {
+            return in_array($tp->getFullProcName(), $sProcNames);
+        });
+        foreach ($toAdd as $tp) {
+            $this->logMsg("Adding " . $tp->getFullProcName());
+            $supervisor->addProgramToGroup(
+                $groupName,
+                $tp->getProcName(),
+                $this->getSupervisorProgramConfig($tp)
+            );
+
+            // Treat starting the process as if it were the first heartbeat.
+            // That way we can detect the timeout that occurs if the process
+            // never even sends one heartbeat message.
+            $this->gotHeartbeat($tp->getFullProcName());
+        }
+    }
+
+    private function gotHeartbeat($procName)
+    {
+        $this->lastHeartbeats[$procName] = time();
+    }
+
+    private function checkHeartbeats()
+    {
+        $timedOut = [];
+        foreach (array_keys($this->lastHeartbeats) as $procName) {
+            $secs = time() - $this->lastHeartbeats[$procName];
+            if ($secs > $this->getGroup()->getHeartbeatTimeout()) {
+                $timedOut[] = $procName;
+            }
+        }
+
+        if (!empty($timedOut)) {
+            foreach ($timedOut as $procName) {
+                // TODO: Log with a higher priority
+                $this->logMsg("$procName timed out, going to restart it");
+            }
+            $this->getSupervisorClient()->restartProcesses($timedOut);
+        }
+    }
+
+    private function getSupervisorClient()
+    {
+        // TODO Get connection info (socket path, username, etc.) from config
+        return new Client("unix:///var/run/supervisor.sock", 0, 10);
+    }
 
     public function run($arg)
     {
-        $this->manager = new Manager($this->getGroup());
-
         $rabbit = $this->getGroup()->getMasterRabbit();
         $ch = $rabbit->channel();
         $queue = $ch->queue_declare($this->getGroup()->getName() . "_master")[0];
@@ -20,19 +104,19 @@ class MasterDaemon extends BaseDaemon
             function($msg) {
                 // TODO Log both valid and invalid messages
                 if ($msg->body == 'sync') {
-                    $this->manager->sync();
-                } elseif (preg_match('/^heartbeat\.(\S+)$/', $msg->body, $matches)) {
-                    $this->manager->gotHeartbeat($matches[1]);
+                    $this->sync();
+                } elseif (preg_match('/^heartbeat\.(.+)$/', $msg->body, $matches)) {
+                    $this->gotHeartbeat($matches[1]);
                 }
                 $msg->delivery_info['channel']->
                     basic_ack($msg->delivery_info['delivery_tag']);
             }
         );
 
-        $this->manager->sync();
+        $this->sync();
 
         while (true) {
-            $this->manager->checkHeartbeats();
+            $this->checkHeartbeats();
 
             $read = [$rabbit->getSocket()];
             $write = null;

@@ -18,7 +18,8 @@
         "symfony/framework-bundle": "2.*",
         "symfony/console": "2.*",
         "mondalaci/supervisor-client": "dev-master",
-        "oldsound/rabbitmq-bundle": "1.*"
+        "oldsound/rabbitmq-bundle": "1.*",
+        "lstrojny/functional-php": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"

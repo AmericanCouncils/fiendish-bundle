@@ -34,6 +34,11 @@ class ProcessEntity
         return $this->procName;
     }
 
+    public function getFullProcName()
+    {
+        return $this->getGroupName() . ":" . $this->getProcName();
+    }
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
