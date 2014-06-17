@@ -6,7 +6,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use AC\FiendishBundle\Exception\RuntimeException;
 
 /**
  * Base class for all Fiendish daemon implementations
@@ -90,7 +89,7 @@ abstract class BaseDaemon implements ContainerAwareInterface
     public static function toCommand($appPath)
     {
         $phpExec = (new PhpExecutableFinder)->find();
-        if (!$phpExec) { throw new RuntimeException("Cannot find php executable"); }
+        if (!$phpExec) { throw new \RuntimeException("Cannot find php executable"); }
 
         $consolePath = realpath($appPath) . "/console";
         return implode(" ", [

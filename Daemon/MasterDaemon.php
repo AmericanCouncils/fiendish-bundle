@@ -124,7 +124,7 @@ class MasterDaemon extends BaseDaemon
             // Wait up to 1 second for messages
             $changes = stream_select($read, $write, $except, 1);
             if ($changes === false) {
-                throw new \Exception("stream_select failed");
+                throw new \RuntimeException("stream_select failed");
             } elseif ($changes > 0) {
                 // TODO If a bunch of syncs queue up, should only run once.
                 $ch->wait();
