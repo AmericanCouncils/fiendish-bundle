@@ -3,6 +3,7 @@
 namespace AC\FiendishBundle\Daemon;
 
 use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Exception\AMQPProtocolException;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -82,10 +83,14 @@ abstract class BaseDaemon implements ContainerAwareInterface
 
     protected function heartbeat()
     {
-        $ch = $this->getGroup()->getMasterRabbit()->channel();
-        $ch->queue_declare($this->getHeartbeatQueueName());
-        $msg = new AMQPMessage("heartbeat." . $this->getFullProcName());
-        $ch->basic_publish($msg, "", $this->getHeartbeatQueueName());
+        try {
+            $ch = $this->getGroup()->getMasterRabbit()->channel();
+            $ch->queue_declare($this->getHeartbeatQueueName());
+            $msg = new AMQPMessage("heartbeat." . $this->getFullProcName());
+            $ch->basic_publish($msg, "", $this->getHeartbeatQueueName());
+        } catch (AMQPProtocolException $e) {
+            # Ignore transient heartbeat problems
+        }
     }
 
     /**
