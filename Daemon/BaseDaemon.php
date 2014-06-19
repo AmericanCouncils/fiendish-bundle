@@ -3,6 +3,7 @@
 namespace AC\FiendishBundle\Daemon;
 
 use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -13,6 +14,15 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 abstract class BaseDaemon implements ContainerAwareInterface
 {
     private $container;
+    private $groupName;
+    private $procName;
+
+    public function __construct($groupName, $procName, $container)
+    {
+        $this->groupName = $groupName;
+        $this->procName = $procName;
+        $this->setContainer($container);
+    }
 
     /**
      * Returns the Symfony service container.
@@ -26,8 +36,6 @@ abstract class BaseDaemon implements ContainerAwareInterface
     {
         $this->container = $container;
     }
-
-    private $groupName;
 
     /**
      * Returns the name of the Supervisor group this daemon process is running in.
@@ -46,8 +54,6 @@ abstract class BaseDaemon implements ContainerAwareInterface
     {
         return $this->getContainer()->get("fiendish.groups." . $this->groupName);
     }
-
-    private $procName;
 
     /**
      * Returns the unique name of this daemon process.
@@ -69,32 +75,32 @@ abstract class BaseDaemon implements ContainerAwareInterface
         return $this->getGroupName() . ":" . $this->getProcName();
     }
 
-    public function __construct($groupName, $procName, $container)
+    protected function getHeartbeatQueueName()
     {
-        $this->groupName = $groupName;
-        $this->procName = $procName;
-        $this->setContainer($container);
+        return $this->groupName . "_master";
     }
 
     protected function heartbeat()
     {
         $ch = $this->getGroup()->getMasterRabbit()->channel();
+        $ch->queue_declare($this->getHeartbeatQueueName());
         $msg = new AMQPMessage("heartbeat." . $this->getFullProcName());
-        $ch->basic_publish($msg, "", $this->groupName . "_master");
+        $ch->basic_publish($msg, "", $this->getHeartbeatQueueName());
     }
 
     /**
      * Returns a shell command that can start this daemon.
      */
-    public static function toCommand($appPath)
+    public static function toCommand(Kernel $kernel)
     {
         $phpExec = (new PhpExecutableFinder)->find();
         if (!$phpExec) { throw new \RuntimeException("Cannot find php executable"); }
 
-        $consolePath = realpath($appPath) . "/console";
+        $consolePath = realpath($kernel->getRootDir()) . "/console";
         return implode(" ", [
-            $phpExec,
-            $consolePath,
+            escapeshellarg($phpExec),
+            escapeshellarg($consolePath),
+            escapeshellarg("--env=" . $kernel->getEnvironment()),
             "-v",
             "fiendish:internal-daemon",
             escapeshellarg(get_called_class())

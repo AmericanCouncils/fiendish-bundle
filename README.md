@@ -104,11 +104,11 @@ To start a daemon process, use the Group service as shown:
 use SomeRandomCoder\FoobarBundle\Daemon\UselessDaemon;
 
 $container = $this->getContainer();
-$rootDir = $container->get('kernel')->getRootDir();
+$kernel = $container->get('kernel');
 $group = $container->get('fiendish.groups.foobar');
 $proc = $group->newProcess(
     "useless_thing", // Name prefix, to help identify this process
-    UselessDaemon::toCommand($rootDir), // The command to execute
+    UselessDaemon::toCommand($kernel), // The command to execute
     ["phrase" => "fries and a shake"] // The argument for run()
 );
 $procName = $proc->getProcName(); // Needed to access this Process later
@@ -150,3 +150,31 @@ is to use the Supervisor console:
 
 (Thankfully, Supervisor's console has tab-completion, so there's no need
 to type out the long random numbers used to uniquely tag processes.)
+
+## Non-PHP Daemons
+
+You can write your daemon processes in a language other than PHP by using the
+`ExternalDaemon` class. Implement the `getExternalCommand` method, returning
+an array with a resource path to the executable and any additional arguments:
+
+```php
+namespace JoeCoder\MyBundle\Daemon;
+
+use AC\FiendishBundle\Daemon\ExternalDaemon;
+
+class MyPythonAppDaemon extends ExternalDaemon
+{
+    public function getExternalCommand($arg)
+    {
+        return ["@JoeCoderMyBundle/Resources/scripts/myapp.py", $arg["phrase"]];
+    }
+}
+```
+
+Your daemon still has to emit heartbeats at regular intervals. To help with this,
+two environment variables are set:
+
+* `FIENDISH_HEARTBEAT_ROUTING_KEY`
+* `FIENDISH_HEARTBEAT_MESSAGE`
+
+To emit a heartbeat, publish the given message to default exchange with the given routing key on AMQP.

@@ -38,3 +38,27 @@ fiendish:
         testfiendish:
             process_user: "www-data" 
             heartbeat_timeout: 5
+
+services:
+    fiendish_test.multiline_syslog_formatter:
+        class: 'Monolog\Formatter\LineFormatter'
+        arguments:
+            - "%%channel%%.%%level_name%%: %%message%% %%extra%%\n"
+            - null # Default date format
+            - true # Allow newlines within the message
+
+monolog:
+    handlers:
+        console:
+            type: console
+        main:
+            type: fingers_crossed
+            action_level: warning
+            passthru_level: info
+            handler: syslog_backend
+        syslog_backend:
+            ident: symfony.fiendish_test
+            type: syslog
+            level: debug
+            facility: local7
+            formatter: fiendish_test.multiline_syslog_formatter

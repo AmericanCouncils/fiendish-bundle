@@ -40,6 +40,13 @@ class MasterDaemonCommand extends Command
             "master", // FIXME Inaccurate process name
             $this->getApplication()->getKernel()->getContainer()
         );
-        $d->run(null);
+        try {
+            $d->run(null);
+        } catch (\Exception $e) {
+            print("Exception in master daemon:\n");
+            print($e);
+            print($e->getTraceAsString());
+            throw $e;
+        }
     }
 }

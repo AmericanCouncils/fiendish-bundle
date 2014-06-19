@@ -12,5 +12,8 @@
             dest=/etc/supervisor.d/testfiendish.conf
       notify:
         - reload supervisor
+    - name: install pika python rabbitmq library
+      command: pip install pika
+               creates=/usr/local/lib/python2.7/dist-packages/pika/__init__.py
   handlers:
     - include: common/handlers/sys.yml

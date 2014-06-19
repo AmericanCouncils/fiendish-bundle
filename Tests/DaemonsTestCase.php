@@ -2,17 +2,16 @@
 
 namespace AC\FiendishBundle\Tests;
 
-use AC\FiendishBundle\Tests\Fixtures\Daemon\TestDaemon;
-
-class DaemonsTest extends FiendishTestCase
+abstract class DaemonsTestCase extends FiendishTestCase
 {
+    abstract protected function getNewProcessCommand();
+
     private function assertProcessLivesAndOutputs($proc, $expectedOutput)
     {
         $supervisor = parent::getSupervisorClient();
         $ok = false;
         for ($i = 1; $i < 30; ++$i) {
             usleep(1000 * 100); // 100 milliseconds
-
             $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
             if (!is_null($procInfo)) {
                 $output = $supervisor->tailProcessStdoutLog(
@@ -22,18 +21,19 @@ class DaemonsTest extends FiendishTestCase
                 )[0];
 
                 if (
-                    strpos($output, $expectedOutput) !== FALSE &&
-                    in_array($procInfo["statename"], [
-                        "RUNNING",
-                        "STARTING"
-                    ])
+                    in_array($procInfo["statename"], ["RUNNING", "STARTING"]) &&
+                    strpos($output, $expectedOutput) !== FALSE
                 ) {
                     $ok = true;
                     break;
                 }
             }
         }
-        $this->assertTrue($ok);
+
+        $this->assertTrue(
+            $ok,
+            "Process " . $proc->getProcName() . " lives and outputs $expectedOutput"
+        );
     }
 
     private function getProcessPids($proc)
@@ -43,12 +43,16 @@ class DaemonsTest extends FiendishTestCase
             usleep(1000 * 100); // 100 milliseconds
             // Get within the loop in case supervisor restarts
             $supervisor = parent::getSupervisorClient();
-            $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
-            if (!is_null($procInfo)) {
-                $pid = (int)($procInfo['pid']);
-                if ($pid > 0) {
-                    $pids[$pid] = true;
+            try {
+                $procInfo = $supervisor->getProcessInfo($proc->getFullProcName());
+                if (!is_null($procInfo)) {
+                    $pid = (int)($procInfo['pid']);
+                    if ($pid > 0) {
+                        $pids[$pid] = true;
+                    }
                 }
+            } catch (\Exception $e) {
+                // Supervisor throws an exception if the proc name isn't valid.
             }
         }
         return array_keys($pids);
@@ -72,7 +76,7 @@ class DaemonsTest extends FiendishTestCase
                 break;
             }
         }
-        $this->assertTrue($ok);
+        $this->assertTrue($ok, "Group " . $grp->getName() . " becomes size $size");
     }
 
     public function testDaemonControl()
@@ -80,21 +84,20 @@ class DaemonsTest extends FiendishTestCase
         $this->requiresMaster();
 
         $grp = $this->getGroup();
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "narf"]
         );
         $this->assertGroupSize($grp, 0);
         $grp->applyChanges();
         $this->assertGroupSize($grp, 1);
         $this->assertProcessLivesAndOutputs($proc, "narfomatic");
-        $this->assertEquals(count($this->getProcessPids($proc)), 1);
+        $this->assertEquals(1, count($this->getProcessPids($proc)));
 
         $proc2 = $grp->newProcess(
             "simple2",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "bork"]
         );
         $this->assertGroupSize($grp, 1);
@@ -118,20 +121,19 @@ class DaemonsTest extends FiendishTestCase
         $this->requiresMaster();
 
         $grp = $this->getGroup();
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "die"]
         );
         $grp->applyChanges();
 
         $pidsBefore = $this->getProcessPids($proc);
-        $this->assertEquals(count($pidsBefore), 1);
+        $this->assertEquals(1, count($pidsBefore));
         posix_kill($pidsBefore[0], 9);
         usleep(1000 * 100);
         $pidsAfter = $this->getProcessPids($proc);
-        $this->assertEquals(count($pidsAfter), 1);
+        $this->assertEquals(1, count($pidsAfter));
         $this->assertNotEquals($pidsBefore[0], $pidsAfter[0]); // Proc restarted
     }
 
@@ -140,15 +142,14 @@ class DaemonsTest extends FiendishTestCase
         $this->requiresMaster();
 
         $grp = $this->getGroup();
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "narf"]
         );
         $grp->applyChanges();
         $pidsBefore = $this->getProcessPids($proc);
-        $this->assertEquals(count($pidsBefore), 1);
+        $this->assertEquals(1, count($pidsBefore));
 
         // Kill master and wait for it to come back
         $supervisor = parent::getSupervisorClient();
@@ -170,10 +171,9 @@ class DaemonsTest extends FiendishTestCase
         $this->requiresMaster();
 
         $grp = $this->getGroup();
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "narf"]
         );
         $grp->applyChanges();
@@ -202,10 +202,9 @@ class DaemonsTest extends FiendishTestCase
         $this->requiresMaster();
 
         $grp = $this->getGroup();
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "vampire"] // Prevents TestDaemon heartbeats
         );
         $grp->applyChanges();
@@ -222,10 +221,9 @@ class DaemonsTest extends FiendishTestCase
         $this->requiresMaster();
 
         $grp = $this->getGroup();
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $proc = $grp->newProcess(
             "simple",
-            TestDaemon::toCommand($rootDir),
+            $this->getNewProcessCommand(),
             ["content" => "human"]
         );
         $grp->applyChanges();

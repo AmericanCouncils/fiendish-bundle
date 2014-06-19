@@ -15,15 +15,23 @@ class MasterDaemon extends BaseDaemon
         print(date(\DateTime::W3C) . " " . $msg . "\n");
     }
 
-    private function getSupervisorProgramConfig($proc)
+    private function getSupervisorDaemonConfig($proc)
     {
+        $heartbeat_queue = $this->getHeartbeatQueueName();
+        $heartbeat_message = "heartbeat." . $proc->getFullProcName();
+
+        // TODO Allow more customization here
         return [
             "command" => $proc->getCommand(),
             "autostart" => "true",
             "autorestart" => "true",
             "user" => $this->getGroup()->getUsername(),
             "exitcodes" => "",
-            "redirect_stderr" => "true"
+            "stdout_syslog" => "local1.info",
+            "stdout_syslog" => "local1.notice",
+            "environment" =>
+                "FIENDISH_HEARTBEAT_ROUTING_KEY=\"$heartbeat_queue\"," .
+                "FIENDISH_HEARTBEAT_MESSAGE=\"$heartbeat_message\""
         ];
     }
 
@@ -54,7 +62,7 @@ class MasterDaemon extends BaseDaemon
             $supervisor->addProgramToGroup(
                 $groupName,
                 $tp->getProcName(),
-                $this->getSupervisorProgramConfig($tp)
+                $this->getSupervisorDaemonConfig($tp)
             );
 
             // Treat starting the process as if it were the first heartbeat.
@@ -85,6 +93,9 @@ class MasterDaemon extends BaseDaemon
                 $this->logMsg("$procName timed out, going to restart it");
             }
             $this->getSupervisorClient()->restartProcesses($timedOut);
+            foreach ($timedOut as $procName) {
+                $this->gotHeartbeat($procName);
+            }
         }
     }
 
@@ -98,7 +109,7 @@ class MasterDaemon extends BaseDaemon
     {
         $rabbit = $this->getGroup()->getMasterRabbit();
         $ch = $rabbit->channel();
-        $queue = $ch->queue_declare($this->getGroup()->getName() . "_master")[0];
+        $queue = $ch->queue_declare($this->getHeartbeatQueueName())[0];
         $ch->basic_consume($queue, "master",
             false, false, true, false, // 3rd true: Exclusive consumer
             function($msg) {

@@ -42,7 +42,8 @@ class Group
      */
     public function newProcess($namePrefix, $command, $arg = null)
     {
-        $procName = $namePrefix . "." . uniqid(getmypid(), true);
+        $uuid = strtr(base64_encode(openssl_random_pseudo_bytes(12)), "/+", "12");
+        $procName = "$namePrefix.$uuid";
         $jsonSpec = json_encode([
             "groupName" => $this->getName(),
             "procName" => $procName,
