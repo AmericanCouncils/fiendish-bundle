@@ -155,7 +155,7 @@ to type out the long random numbers used to uniquely tag processes.)
 
 You can write your daemon processes in a language other than PHP by using the
 `ExternalDaemon` class. Implement the `getExternalCommand` method, returning
-an array with a resource path to the executable and any additional arguments:
+a resource path or absolute path to the executable:
 
 ```php
 namespace JoeCoder\MyBundle\Daemon;
@@ -164,12 +164,15 @@ use AC\FiendishBundle\Daemon\ExternalDaemon;
 
 class MyPythonAppDaemon extends ExternalDaemon
 {
-    public function getExternalCommand($arg)
+    public function getExternalCommand()
     {
-        return ["@JoeCoderMyBundle/Resources/scripts/myapp.py", $arg["phrase"]];
+        return "@JoeCoderMyBundle/Resources/scripts/myapp.py";
     }
 }
 ```
+
+The third argument passsed to startProcess will be JSON-encoded and given to your process
+as the first command-line argument.
 
 Your daemon still has to emit heartbeats at regular intervals. To help with this,
 two environment variables are set:

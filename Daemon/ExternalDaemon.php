@@ -11,7 +11,9 @@ abstract class ExternalDaemon extends BaseDaemon implements ExternalDaemonInterf
 {
     public static function toCommand(Kernel $kernel)
     {
-        return $kernel->locateResource(static::getExternalCommand());
+        $cmd = static::getExternalCommand();
+        if ($cmd[0] == '@') { $cmd = $kernel->locateResource($cmd); }
+        return $cmd;
     }
 
     public function run($arg)
