@@ -2,16 +2,17 @@
 
 namespace AC\FiendishBundle\Daemon;
 
-use Symfony\Component\HttpKernel\Kernel;
-
 /**
  * Base class for daemons implemented by non-PHP programs
  */
 abstract class ExternalDaemon extends BaseDaemon implements ExternalDaemonInterface
 {
-    public static function toCommand($kernel, $spec)
+    public static function toCommand($container, $spec)
     {
-        $cmd = static::getExternalCommand();
+        $kernel = $container->get('kernel');
+
+        $cmd = static::getExternalCommand($container);
+        $cmd = $container->getParameterBag()->resolveValue($cmd);
         if ($cmd[0] == '@') { $cmd = $kernel->locateResource($cmd); }
         $cmd = escapeshellarg($cmd);
 

@@ -6,7 +6,7 @@ use AC\FiendishBundle\Daemon\ExternalDaemon;
 
 class ExternalTestDaemon extends ExternalDaemon
 {
-    public static function getExternalCommand()
+    public static function getExternalCommand($container)
     {
         return "@ACFiendishBundle/Tests/Fixtures/Resources/myapp.py";
     }

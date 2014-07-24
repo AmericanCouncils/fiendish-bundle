@@ -44,7 +44,7 @@ class Group
             "procName" => $procName,
             "arg" => $arg
         ];
-        $cmd = $daemonClass::toCommand($this->kernel, $spec);
+        $cmd = $daemonClass::toCommand($this->container, $spec);
         $procEntity = new ProcessEntity($this->getName(), $procName, $cmd);
         $em = $this->doctrine->getManager();
         $em->persist($procEntity);
@@ -155,13 +155,14 @@ class Group
         return $this->rabbitConn;
     }
 
+    private $container;
     private $rabbitConn;
     private $doctrine;
 
-    public function __construct($name, $kernel, $rabbitConn, $doctrine, $username, $heartbeatTimeout)
+    public function __construct($name, $container, $rabbitConn, $doctrine, $username, $heartbeatTimeout)
     {
         $this->name = $name;
-        $this->kernel = $kernel;
+        $this->container = $container;
         $this->rabbitConn = $rabbitConn;
         $this->doctrine = $doctrine;
         $this->username = $username;

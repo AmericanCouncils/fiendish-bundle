@@ -36,7 +36,7 @@ old_sound_rabbit_mq:
 fiendish:
     groups:
         testfiendish:
-            process_user: "www-data" 
+            process_user: "www-data"
             heartbeat_timeout: 5
 
 services:

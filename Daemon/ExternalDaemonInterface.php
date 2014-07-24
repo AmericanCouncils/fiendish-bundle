@@ -4,5 +4,5 @@ namespace AC\FiendishBundle\Daemon;
 
 interface ExternalDaemonInterface
 {
-    public static function getExternalCommand();
+    public static function getExternalCommand($container);
 }
