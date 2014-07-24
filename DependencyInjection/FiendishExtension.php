@@ -24,7 +24,8 @@ class FiendishExtension extends Extension
                 '%fiendish.group.class%',
                 [
                     $groupname,
-                    new Reference("old_sound_rabbit_mq.connection." . $group['rabbit_conn']),
+                    new Reference('kernel'),
+                    new Reference('old_sound_rabbit_mq.connection.' . $group['rabbit_conn']),
                     new Reference('doctrine'),
                     $group['process_user'],
                     $group['heartbeat_timeout']

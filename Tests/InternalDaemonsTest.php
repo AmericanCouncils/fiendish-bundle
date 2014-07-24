@@ -6,9 +6,8 @@ use AC\FiendishBundle\Tests\Fixtures\Daemon\TestDaemon;
 
 class InternalDaemonsTest extends DaemonsTestCase
 {
-    protected function getNewProcessCommand()
+    protected function getDaemonClass()
     {
-        $kernel = $this->getContainer()->get('kernel');
-        return TestDaemon::toCommand($kernel);
+        return TestDaemon::class;
     }
 }

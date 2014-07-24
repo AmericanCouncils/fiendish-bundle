@@ -2,22 +2,20 @@
 
 namespace AC\FiendishBundle\Tests;
 
+use AC\FiendishBundle\Tests\Fixtures\Daemon\TestDaemon;
+
 class GroupTest extends FiendishTestCase
 {
     public function testProcessCreation()
     {
         $grp = $this->getGroup();
-        $proc = $grp->newProcess(
-            "foobar",
-            "somecmd xyz abc",
-            ["content" => "narf"]
-        );
+        $proc = $grp->newProcess("foobar", TestDaemon::class, ["content" => "narf"]);
 
         $this->assertEquals(parent::GROUP_NAME, $proc->getGroupName());
         $this->assertContains("foobar", $proc->getProcName());
         $this->assertNotEquals("foobar", $proc->getProcName());
         $this->assertStringStartsWith(parent::GROUP_NAME . ":", $proc->getFullProcName());
-        $this->assertStringStartsWith("somecmd xyz abc", $proc->getCommand());
+        $this->assertContains("console", $proc->getCommand());
         $this->assertContains("narf", $proc->getCommand());
     }
 
@@ -27,8 +25,7 @@ class GroupTest extends FiendishTestCase
 
         $this->assertNull($grp->getProcess("whatever"));
         
-        // This process won't start properly, but that's not what we're testing
-        $proc = $grp->newProcess("x", "y");
+        $proc = $grp->newProcess("x", TestDaemon::class);
         $grp->applyChanges();
         $procName = $proc->getProcName();
         $this->assertEquals($procName, $grp->getProcess($procName)->getProcName());

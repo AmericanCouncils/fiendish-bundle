@@ -28,32 +28,24 @@ class Group
      * @param $namePrefix A short string describing this Process; can be non-unique.
      *        The generated process's name will also include a unique random
      *        suffix.
-     * @param $command The shell command that the Process will run. If you are
-     *        running a daemon implemented in PHP as a subclass of
-     *        Daemon\BaseDaemon then you can get an appropriate command
-     *        by calling the static method getCommand() on your class.
+     * @param $daemonClass A BaseDaemon subclass.
      * @param $arg (Optional) JSON-encodable object to pass to process as an argument.
-     *        Note that associative arrays are converted into objects due to passing
-     *        through PHP's somewhat odd JSON decoding conventions.
      * @return The new Process object. It's also tracked internally by the Group,
      *         so you don't need to worry about saving this return value. However,
      *         you will want need to preserve the name if you want to get this
      *         specific Process out of the Group later with getProcess().
      */
-    public function newProcess($namePrefix, $command, $arg = null)
+    public function newProcess($namePrefix, $daemonClass, $arg = null)
     {
         $uuid = strtr(base64_encode(openssl_random_pseudo_bytes(12)), "/+", "12");
         $procName = "$namePrefix.$uuid";
-        $jsonSpec = json_encode([
+        $spec = [
             "groupName" => $this->getName(),
             "procName" => $procName,
             "arg" => $arg
-        ]);
-        $procEntity = new ProcessEntity(
-            $this->getName(),
-            $procName,
-            $command . " " . escapeshellarg($jsonSpec)
-        );
+        ];
+        $cmd = $daemonClass::toCommand($this->kernel, $spec);
+        $procEntity = new ProcessEntity($this->getName(), $procName, $cmd);
         $em = $this->doctrine->getManager();
         $em->persist($procEntity);
 
@@ -166,9 +158,10 @@ class Group
     private $rabbitConn;
     private $doctrine;
 
-    public function __construct($name, $rabbitConn, $doctrine, $username, $heartbeatTimeout)
+    public function __construct($name, $kernel, $rabbitConn, $doctrine, $username, $heartbeatTimeout)
     {
         $this->name = $name;
+        $this->kernel = $kernel;
         $this->rabbitConn = $rabbitConn;
         $this->doctrine = $doctrine;
         $this->username = $username;

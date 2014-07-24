@@ -2,10 +2,9 @@
 
 # Python implementation of Fixtures/Daemon/TestDaemon
 
-import time, sys, os, pika, json
+import time, sys, os, pika
 
-spec = json.loads(sys.argv[1])
-content = spec['arg']['content']
+content = sys.argv[1]
 heartbeat_key = os.environ.get('FIENDISH_HEARTBEAT_ROUTING_KEY')
 heartbeat_msg = os.environ.get('FIENDISH_HEARTBEAT_MESSAGE')
 

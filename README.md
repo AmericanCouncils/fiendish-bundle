@@ -171,8 +171,8 @@ class MyPythonAppDaemon extends ExternalDaemon
 }
 ```
 
-The third argument passsed to startProcess will be JSON-encoded and given to your process
-as the first command-line argument.
+The third argument passsed to startProcess should be an array, whose contents which
+will be passed to your program as command-line arguments.
 
 Your daemon still has to emit heartbeats at regular intervals. To help with this,
 two environment variables are set:

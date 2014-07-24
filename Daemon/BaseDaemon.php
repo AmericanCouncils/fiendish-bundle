@@ -96,7 +96,7 @@ abstract class BaseDaemon implements ContainerAwareInterface
     /**
      * Returns a shell command that can start this daemon.
      */
-    public static function toCommand(Kernel $kernel)
+    public static function toCommand($kernel, $spec)
     {
         $phpExec = (new PhpExecutableFinder)->find();
         if (!$phpExec) { throw new \RuntimeException("Cannot find php executable"); }
@@ -108,7 +108,8 @@ abstract class BaseDaemon implements ContainerAwareInterface
             escapeshellarg("--env=" . $kernel->getEnvironment()),
             "-v",
             "fiendish:internal-daemon",
-            escapeshellarg(get_called_class())
+            escapeshellarg(get_called_class()),
+            escapeshellarg(json_encode($spec))
         ]);
     }
 

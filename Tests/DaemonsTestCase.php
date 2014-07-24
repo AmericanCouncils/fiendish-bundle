@@ -4,7 +4,7 @@ namespace AC\FiendishBundle\Tests;
 
 abstract class DaemonsTestCase extends FiendishTestCase
 {
-    abstract protected function getNewProcessCommand();
+    abstract protected function getDaemonClass();
 
     private function assertProcessLivesAndOutputs($proc, $expectedOutput)
     {
@@ -86,7 +86,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
         $grp = $this->getGroup();
         $proc = $grp->newProcess(
             "simple",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "narf"]
         );
         $this->assertGroupSize($grp, 0);
@@ -97,7 +97,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
 
         $proc2 = $grp->newProcess(
             "simple2",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "bork"]
         );
         $this->assertGroupSize($grp, 1);
@@ -123,7 +123,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
         $grp = $this->getGroup();
         $proc = $grp->newProcess(
             "simple",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "die"]
         );
         $grp->applyChanges();
@@ -144,7 +144,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
         $grp = $this->getGroup();
         $proc = $grp->newProcess(
             "simple",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "narf"]
         );
         $grp->applyChanges();
@@ -173,7 +173,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
         $grp = $this->getGroup();
         $proc = $grp->newProcess(
             "simple",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "narf"]
         );
         $grp->applyChanges();
@@ -204,7 +204,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
         $grp = $this->getGroup();
         $proc = $grp->newProcess(
             "simple",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "vampire"] // Prevents TestDaemon heartbeats
         );
         $grp->applyChanges();
@@ -223,7 +223,7 @@ abstract class DaemonsTestCase extends FiendishTestCase
         $grp = $this->getGroup();
         $proc = $grp->newProcess(
             "simple",
-            $this->getNewProcessCommand(),
+            $this->getDaemonClass(),
             ["content" => "human"]
         );
         $grp->applyChanges();
