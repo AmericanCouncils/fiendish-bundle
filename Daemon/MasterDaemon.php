@@ -94,6 +94,7 @@ class MasterDaemon extends BaseDaemon
             }
             $this->getSupervisorClient()->restartProcesses($timedOut);
             foreach ($timedOut as $procName) {
+                // Allow it some time to initialize before requiring the first heartbeat.
                 $this->gotHeartbeat($procName);
             }
         }
@@ -123,6 +124,13 @@ class MasterDaemon extends BaseDaemon
                     basic_ack($msg->delivery_info['delivery_tag']);
             }
         );
+
+        // For any currently running processes, mark an initial heartbeat.
+        // That way if master starts up with any of these processes already locked, we'll
+        // detect it later.
+        foreach ($this->getGroup()->getAllProcesses() as $tp) {
+            $this->gotHeartbeat($tp->getFullProcName());
+        }
 
         $this->sync();
 

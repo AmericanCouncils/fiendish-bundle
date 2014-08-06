@@ -93,7 +93,7 @@ class Client extends SupervisorClient
         $this->stopProcessesParallel($fullProcNames, $stopTimeoutSecs);
         foreach ($fullProcNames as $procName) {
             $this->logMsg("Restarting $procName");
-            $this->startProcess($procName);
+            $this->startProcess($procName, false);
         }
     }
 }
