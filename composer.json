@@ -17,7 +17,7 @@
         "doctrine/doctrine-migrations-bundle": "*",
         "symfony/framework-bundle": "2.*",
         "symfony/console": "2.*",
-        "mondalaci/supervisor-client": "dev-master#447eba8e2d99ae5398634450dfee9a3bb9705b06",
+        "mondalaci/supervisor-client": "dev-master",
         "oldsound/rabbitmq-bundle": "1.*",
         "lstrojny/functional-php": "*"
     },
